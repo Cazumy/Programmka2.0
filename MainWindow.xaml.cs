@@ -1,28 +1,37 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Animation;
+using System.Windows.Shapes;
 using Microsoft.Win32;
+
 namespace Programmka2._0
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    ///     Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        bool Initializing_Labels = true,
-            Initializing_Disk = true,
-            Initializing_Access = true,
-            Initializing_Objects = true,
-            Initializing_Network = true;
+        private bool _initializingLabels = true,
+            _initializingDisk = true,
+            _initializingAccess = true,
+            _initializingObjects = true,
+            _initializingNetwork = true;
+
         public MainWindow()
         {
             InitializeComponent();
 
             InitializeCheckBoxes();
         }
+
         private void MainWindow_Loaded(object senter, RoutedEventArgs e)
         {
-            Initializing_Labels = Initializing_Disk = Initializing_Access = Initializing_Objects = Initializing_Network = false;
+            _initializingLabels = _initializingDisk =
+                _initializingAccess = _initializingObjects = _initializingNetwork = false;
         }
+
         public void InitializeCheckBoxes()
         {
             DiskDuplicate.IsChecked = CheckDuplicate();
@@ -32,154 +41,251 @@ namespace Programmka2._0
             QuickAccess.IsChecked = CheckQuickAccess();
 
             Objects3D.IsChecked = Check3DObjects();
-        }
-        private bool CheckDuplicate()
-        {
-            if (Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders\{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}") != null)
-            {
-                return true;
-            }
-            return false;
-        }
-        private bool CheckLabels()
-        {
-            string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
-            string paramName = "29";
 
-            using (RegistryKey hKey = Registry.LocalMachine.OpenSubKey(subKey))
-            {
-                if (hKey != null)
-                {
-                    object value = hKey.GetValue(paramName);
-                    if (value != null)
-                    {
-                        return false;
-                    }
-                }
-            }
+            NetworkIcon.IsChecked = CheckNetworkIcon();
+        }
 
+        private static bool CheckDuplicate()
+        {
+            return Registry.LocalMachine.OpenSubKey(
+                       @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders\{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}") != null;
+        }
+        private static bool CheckLabels()
+        {
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
+
+            using (var hKey = Registry.LocalMachine.OpenSubKey(subKey))
+            {
+                var value = hKey?.GetValue("29");
+                if (value != null) return false;
+            }
             return true;
         }
-        private bool CheckQuickAccess()
+        private static bool CheckQuickAccess()
         {
-            string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
-            string paramName = "HubMode";
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
 
-            using (RegistryKey hKey = Registry.LocalMachine.OpenSubKey(subKey))
+            using (var hKey = Registry.LocalMachine.OpenSubKey(subKey))
             {
-                if (hKey != null)
-                {
-                    object value = hKey.GetValue(paramName);
-                    if (value != null)
-                    {
-                        return true;
-                    }
-                }
+                var value = hKey?.GetValue("HubMode");
+                if (value != null) return false;
+            }
+            return true;
+        }
+        private static bool Check3DObjects()
+        {
+            const string keyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
+
+            using (var hKey = Registry.LocalMachine.OpenSubKey(keyPath))
+            {
+                if (hKey != null) return true;
             }
 
             return false;
         }
-        private bool Check3DObjects()
+        private static bool CheckNetworkIcon()
         {
-            string keyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
-
-            using (RegistryKey hKey = Registry.LocalMachine.OpenSubKey(keyPath))
+            bool attributes = true;
+            bool isPinned = true;
+            using (var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder"))
             {
-                if (hKey != null)
+                if (key != null)
                 {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private void DiskDuplicate_On(object sender, RoutedEventArgs e)
-        {
-            if (Initializing_Disk) return;
-            string subKeyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
-            string keyName = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
-            try
-            {
-                using (RegistryKey key = Registry.LocalMachine.CreateSubKey(subKeyPath, true))
-                {
-                    if (key != null)
+                    var value = key.GetValue("Attributes");
+                    if (value is int intValue)
                     {
-                        key.DeleteSubKeyTree(keyName, false);
+                        attributes = (uint)intValue != 0xb0940064U;
+                    }
+                }
+
+            }
+            using (var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"))
+            {
+                if (key != null)
+                {
+                    var value = key.GetValue("System.IsPinnedtoNameSpaceTree");
+                    if (value is int intValue)
+                    {
+                        isPinned = intValue != 0;
                     }
                 }
             }
-            catch (Exception ex)
+            return attributes&&isPinned;
+        }
+
+        private static void AnimateButton(CheckBox button)
+        {
+            Ellipse toggleButton = (Ellipse)button.Template.FindName("ToggleButton", button);
+
+            if (button.IsChecked == true)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}");
+                ThicknessAnimation animation = new ThicknessAnimation
+                {
+                    From = new Thickness(0, 0, 0, 0),
+                    To = new Thickness(15, 0, 0, 0),
+                    Duration = TimeSpan.FromSeconds(0.15)
+                };
+                toggleButton.BeginAnimation(Ellipse.MarginProperty, animation);
+            }
+            else
+            {
+                ThicknessAnimation animation = new ThicknessAnimation
+                {
+                    From = new Thickness(15, 0, 0, 0),
+                    To = new Thickness(0, 0, 0, 0),
+                    Duration = TimeSpan.FromSeconds(0.15)
+                };
+                toggleButton.BeginAnimation(Ellipse.MarginProperty, animation);
             }
         }
-        private void DiskDuplicate_Off(object sender, RoutedEventArgs e)
+
+        private void RemoveDiskDuplicate(object sender, RoutedEventArgs e)
         {
-            if (Initializing_Disk) return;
-            string subKeyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
-            string keyName = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
-            string valueData = "Removable Drives";
-            try
+            if (_initializingDisk) return;
+            const string subKeyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
+            const string keyName = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
+            using (var key = Registry.LocalMachine.CreateSubKey(subKeyPath, true))
             {
-                using (RegistryKey key = Registry.LocalMachine.CreateSubKey(subKeyPath))
+                key?.DeleteSubKeyTree(keyName, false);
+            }
+            AnimateButton(DiskDuplicate);
+        }
+        private void ReturnDiskDuplicate(object sender, RoutedEventArgs e)
+        {
+            if (_initializingDisk) return;
+            const string subKeyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
+            const string keyName = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
+            const string valueData = "Removable Drives";
+            using (var key = Registry.LocalMachine.CreateSubKey(subKeyPath))
+            {
+                if (key == null) return;
+                var newKey = key.OpenSubKey(keyName, true) ?? key.CreateSubKey(keyName);
+                newKey?.SetValue("", valueData, RegistryValueKind.String);
+            }
+            AnimateButton(DiskDuplicate);
+        }
+
+        private void RemoveLabelArrows(object sender, RoutedEventArgs e)
+        {
+            if (_initializingLabels) return;
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
+            using (var hKey = Registry.LocalMachine.CreateSubKey(subKey))
+            {
+                // Добавление или обновление параметра "29"
+                hKey?.SetValue("29", "", RegistryValueKind.String);
+            }
+        }
+        private void ReturnLabelArrows(object sender, RoutedEventArgs e)
+        {
+            if (_initializingLabels) return;
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
+            Registry.LocalMachine.DeleteSubKeyTree(subKey, throwOnMissingSubKey: false);
+        }
+
+        private void RemoveQuickAccess(object sender, RoutedEventArgs e)
+        {
+            if (_initializingAccess) return;
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
+            using (var hKey = Registry.LocalMachine.CreateSubKey(subKey))
+            {
+                hKey?.SetValue("HubMode",1,RegistryValueKind.String);
+            }
+        }
+        private void ReturnQuickAccess(object sender, RoutedEventArgs e)
+        {
+            if (_initializingAccess) return;
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
+            using (var hKey = Registry.LocalMachine.OpenSubKey(subKey, writable: true))
+            {
+                hKey?.DeleteValue("HubMode");
+            }
+        }
+
+        private void RemoveObjects3D(object sender, RoutedEventArgs e)
+        {
+            if (_initializingObjects) return;
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
+            Registry.LocalMachine.DeleteSubKeyTree(subKey, throwOnMissingSubKey: false);
+        }
+        private void ReturnObjects3D(object sender, RoutedEventArgs e)
+        {
+            if (_initializingObjects) return;
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
+            using (var hKey = Registry.LocalMachine.CreateSubKey(subKey))
+            {
+
+            }
+        }
+
+        private void RemoveNetworkIcon(object sender, RoutedEventArgs e)
+        {
+            if (_initializingNetwork) return;
+            var commands = new[]
+{
+        "reg add \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0940064\" /f >nul 2>&1",
+        "reg add \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /t REG_DWORD /d \"0\" /f >nul 2>&1",
+        "reg add \"HKCU\\Software\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0940064\" /f >nul",
+        "reg add \"HKCU\\Software\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /t REG_DWORD /d \"0\" /f >nul 2>&1",
+        "TI.exe cmd.exe /c reg add \"HKLM\\SOFTWARE\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0040064\" /f >nul 2>&1",
+        "TI.exe cmd.exe /c reg delete \"HKLM\\SOFTWARE\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /f >nul 2>&1",
+        "TI.exe cmd.exe /c reg add \"HKLM\\SOFTWARE\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0040064\" /f >nul 2>&1",
+        "TI.exe cmd.exe /c reg delete \"HKLM\\SOFTWARE\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /f >nul 2>&1",
+    };
+
+            foreach (var command in commands)
+            {
+                var startInfo = new ProcessStartInfo
                 {
-                    if (key != null)
-                    {
-                        // Проверяем, существует ли ключ
-                        var newKey = key.OpenSubKey(keyName, true);
-                        if (newKey == null)
-                        {
-                            // Создаем ключ, если он не существует
-                            newKey = key.CreateSubKey(keyName);
-                        }
-                        if (newKey != null)
-                        {
-                            newKey.SetValue("", valueData, RegistryValueKind.String);
-                        }
-                    }
+                    FileName = "cmd.exe",
+                    Arguments = $"/c {command}",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using (var process = new Process())
+                {
+                    process.StartInfo = startInfo;
+                    process.Start();
+                    process.WaitForExit();
                 }
             }
-            catch (Exception ex)
+        }
+        private void ReturnNetworkIcon(object sender, RoutedEventArgs e)
+        {
+            if (_initializingNetwork) return;
+            var commands = new[]
+{
+        "reg add \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0040064\" /f >nul 2>&1",
+        "reg delete \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /f >nul 2>&1",
+        "reg add \"HKCU\\Software\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0040064\" /f >nul",
+        "reg delete \"HKCU\\Software\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /f >nul 2>&1",
+        "TI.exe cmd.exe /c reg add \"HKLM\\SOFTWARE\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0940064\" /f >nul 2>&1",
+        "TI.exe cmd.exe /c reg delete \"HKLM\\SOFTWARE\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /f >nul 2>&1",
+        "TI.exe cmd.exe /c reg add \"HKLM\\SOFTWARE\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0940064\" /f >nul 2>&1",
+        "TI.exe cmd.exe /c reg delete \"HKLM\\SOFTWARE\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /f >nul 2>&1",
+    };
+
+            foreach (var command in commands)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}");
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = $"/c {command}",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using (var process = new Process())
+                {
+                    process.StartInfo = startInfo;
+                    process.Start();
+                    process.WaitForExit();
+                }
             }
-        }
-
-        private void LabelArrows_On(object sender, RoutedEventArgs e)
-        {
-            if (Initializing_Labels) return;
-        }
-        private void LabelArrows_Off(object sender, RoutedEventArgs e)
-        {
-            if (Initializing_Labels) return;
-        }
-
-        private void QuickAccess_On(object sender, RoutedEventArgs e)
-        {
-            if (Initializing_Access) return;
-        }
-        private void QuickAccess_Off(object sender, RoutedEventArgs e)
-        {
-            if (Initializing_Access) return;
-        }
-
-        private void Objects3D_On(object sender, RoutedEventArgs e)
-        {
-            if (Initializing_Objects) return;
-        }
-        private void Objects3D_Off(object sender, RoutedEventArgs e)
-        {
-            if (Initializing_Objects) return;
-        }
-
-        private void Network_icon_On(object sender, RoutedEventArgs e)
-        {
-            if (Initializing_Network) return;
-        }
-        private void Network_icon_Off(object sender, RoutedEventArgs e)
-        {
-            if (Initializing_Network) return;
         }
     }
 }

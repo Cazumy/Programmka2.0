@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Programmka2._0"
         mc:Ignorable="d"
         Loaded="MainWindow_Loaded"
                 Title="MainWindow" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="C:\Users\HoMeMem\source\repos\Programmka2.0\RS1.ico">
@@ -93,7 +92,7 @@
     </Window.Resources>
     <Grid Background="{DynamicResource PrimaryBackgroundColor}">
 
-        <Canvas Margin="95,115,325,115">
+        <Canvas Margin="386,190,24,27">
             <StackPanel Margin="80 5 0 0">
                 <Rectangle x:Name="DiskDuplicateBackground" 
                            Style="{DynamicResource BackgroundCheckBox}"/>
@@ -117,21 +116,24 @@
 
             <StackPanel HorizontalAlignment="Left" Canvas.Left="335" VerticalAlignment="Center">
                 <CheckBox x:Name="DiskDuplicate"
-                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="DiskDuplicate_On" Unchecked="DiskDuplicate_Off"/>
+                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="ReturnDiskDuplicate" Unchecked="RemoveDiskDuplicate"/>
                 <CheckBox x:Name="LabelArrows" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="LabelArrows_On" Unchecked="LabelArrows_Off"/>
+                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="ReturnLabelArrows" Unchecked="RemoveLabelArrows"/>
                 <CheckBox x:Name="QuickAccess" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="QuickAccess_On" Unchecked="QuickAccess_Off"/>
+                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="ReturnQuickAccess" Unchecked="RemoveQuickAccess"/>
                 <CheckBox x:Name="Objects3D" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="Objects3D_On" Unchecked="Objects3D_Off"/>
-                <CheckBox x:Name="Network_icon" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="Network_icon_On" Unchecked="Network_icon_Off"/>
+                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="ReturnObjects3D" Unchecked="RemoveObjects3D"/>
+                <CheckBox x:Name="NetworkIcon" VerticalAlignment="Center" HorizontalAlignment="Center"
+                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="ReturnNetworkIcon" Unchecked="RemoveNetworkIcon"/>
             </StackPanel>
+            <StackPanel Margin="160,9,0,3" >
+                <Label Content="DiskDuplications" Margin="0,0,0,15"/>
+                <Label Content="Arrows on labels" Margin="0,0,0,16"/>
+                <Label Content="3D objects" Margin="0,0,0,16"/>
+                <Label Content="Quick access" Margin="0,0,0,16"/>
+                <Label Content="Network icon"/>
+            </StackPanel>
+
         </Canvas>
-        <Label Content="DiskDuplications" HorizontalAlignment="Left" Margin="270,123,0,0" VerticalAlignment="Top"/>
-        <Label Content="Arrows on labels" HorizontalAlignment="Left" Margin="270,166,0,0" VerticalAlignment="Top"/>
-        <Label Content="3D objects" HorizontalAlignment="Left" Margin="280,250,0,0" VerticalAlignment="Top"/>
-        <Label Content="Quick access" HorizontalAlignment="Left" Margin="280,210,0,0" VerticalAlignment="Top"/>
-        <Label Content="Network icon" HorizontalAlignment="Left" Margin="279,293,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>
