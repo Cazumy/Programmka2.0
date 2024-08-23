@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Programmka2._0"
         mc:Ignorable="d"
         Loaded="MainWindow_Loaded"
                 Title="MainWindow" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="C:\Users\HoMeMem\source\repos\Programmka2.0\RS1.ico">
@@ -15,18 +16,38 @@
         <SolidColorBrush x:Key="SecundaryGrayColor" Color="#CECECE"/>
         <SolidColorBrush x:Key="TertiaryBlueColor" Color="#C2D1FC"/>
 
-        <Style x:Key="BackgroundCheckBox" TargetType="{x:Type Rectangle}">
+        <Style x:Key="ToggleButtonBackgroundStyle" TargetType="{x:Type ContentControl}">
             <Setter Property="Height" Value="34"/>
             <Setter Property="Width" Value="300"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="Fill" Value="Pink"/>
-            <Setter Property="RadiusX" Value="15"/>
-            <Setter Property="RadiusY" Value="15"/>
             <Setter Property="Margin" Value="0 0 0 8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                        <Border Background="Pink"
+                                CornerRadius="15">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <!-- Image -->
+                                <Image Width="34"
+                                       Height="34"
+                                       Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:ToggleButtonContent.ImageSource)}" Margin="20,0,0,0" Cursor=""/>
+                                <!-- Text -->
+                                <TextBlock Grid.Column="1"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           Text="{TemplateBinding Content}" Margin="32,0,0,0" Cursor=""/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
-
-        <Style x:Key="CheckBoxStyle" TargetType="{x:Type CheckBox}">
+        <Style x:Key="ToggleButtonStyle" TargetType="{x:Type CheckBox}">
             <Setter Property="Background" Value="{DynamicResource SecundaryGrayColor}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource PrimaryGrayColor}"/>
             <Setter Property="Height" Value="40"/>
@@ -89,51 +110,55 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
     </Window.Resources>
     <Grid Background="{DynamicResource PrimaryBackgroundColor}">
-
         <Canvas Margin="386,190,24,27">
             <StackPanel Margin="80 5 0 0">
-                <Rectangle x:Name="DiskDuplicateBackground" 
-                           Style="{DynamicResource BackgroundCheckBox}"/>
-                <Rectangle x:Name="LabelArrowsBackground" 
-                           Style="{DynamicResource BackgroundCheckBox}"/>
-                <Rectangle x:Name="QuickAccessBackground" 
-                           Style="{DynamicResource BackgroundCheckBox}"/>
-                <Rectangle x:Name="Objects3DBackground" 
-                           Style="{DynamicResource BackgroundCheckBox}"/>
-                <Rectangle x:Name="NetworkBackground" 
-                           Style="{DynamicResource BackgroundCheckBox}"/>
-            </StackPanel>
-
-            <StackPanel Margin="100 13 0 0">
-                <Image Source="C:\Users\HoMeMem\source\repos\Programmka2.0\disk.png" Height="34" Width="34" Margin="0 -8 0 8"/>
-                <Image Source="C:\Users\HoMeMem\source\repos\Programmka2.0\label.png" Height="34" Width="34"/>
-                <Image Source="C:\Users\HoMeMem\source\repos\Programmka2.0\quick_access.png" Height="34" Width="34" Margin="0 8 0 0"/>
-                <Image Source="C:\Users\HoMeMem\source\repos\Programmka2.0\3d_objects.png" Height="34" Width="34" Margin="0 8 0 0"/>
-                <Image Source="C:\Users\HoMeMem\source\repos\Programmka2.0\network.png" Height="34" Width="34" Margin="0 8 0 0"/>
+                <ContentControl x:Name="DiskDuplicateBackground" 
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\disk.png"
+                                Content="DiskDuplications"/>
+                
+                <ContentControl x:Name="LabelArrowsBackground" 
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\label.png"
+                                Content="Arrows on labels"/>
+                
+                <ContentControl x:Name="QuickAccessBackground" 
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\quick_access.png"
+                                Content="Quick access"/>
+                
+                <ContentControl x:Name="Objects3DBackground" 
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\3d_objects.png"
+                                Content="3D objects"/>
+                
+                <ContentControl x:Name="NetworkBackground" 
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\network.png"
+                                Content="Network icon"/>
             </StackPanel>
 
             <StackPanel HorizontalAlignment="Left" Canvas.Left="335" VerticalAlignment="Center">
                 <CheckBox x:Name="DiskDuplicate"
-                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="ReturnDiskDuplicate" Unchecked="RemoveDiskDuplicate"/>
+                          Style="{DynamicResource ToggleButtonStyle}" IsChecked="False" Checked="ReturnDiskDuplicate" Unchecked="RemoveDiskDuplicate"/>
                 <CheckBox x:Name="LabelArrows" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="ReturnLabelArrows" Unchecked="RemoveLabelArrows"/>
+                          Style="{DynamicResource ToggleButtonStyle}" IsChecked="False" Checked="ReturnLabelArrows" Unchecked="RemoveLabelArrows"/>
                 <CheckBox x:Name="QuickAccess" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="ReturnQuickAccess" Unchecked="RemoveQuickAccess"/>
+                          Style="{DynamicResource ToggleButtonStyle}" IsChecked="False" Checked="ReturnQuickAccess" Unchecked="RemoveQuickAccess"/>
                 <CheckBox x:Name="Objects3D" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="ReturnObjects3D" Unchecked="RemoveObjects3D"/>
+                          Style="{DynamicResource ToggleButtonStyle}" IsChecked="False" Checked="ReturnObjects3D" Unchecked="RemoveObjects3D"/>
                 <CheckBox x:Name="NetworkIcon" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource CheckBoxStyle}" IsChecked="False" Checked="ReturnNetworkIcon" Unchecked="RemoveNetworkIcon"/>
+                          Style="{DynamicResource ToggleButtonStyle}" IsChecked="False" Checked="ReturnNetworkIcon" Unchecked="RemoveNetworkIcon"/>
             </StackPanel>
-            <StackPanel Margin="160,9,0,3" >
-                <Label Content="DiskDuplications" Margin="0,0,0,15"/>
-                <Label Content="Arrows on labels" Margin="0,0,0,16"/>
-                <Label Content="3D objects" Margin="0,0,0,16"/>
-                <Label Content="Quick access" Margin="0,0,0,16"/>
-                <Label Content="Network icon"/>
-            </StackPanel>
+        </Canvas>
 
+        <Canvas d:IsHidden="True">
+            <StackPanel>
+
+            </StackPanel>
         </Canvas>
     </Grid>
 </Window>

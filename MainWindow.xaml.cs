@@ -18,7 +18,6 @@ namespace Programmka2._0
             _initializingAccess = true,
             _initializingObjects = true,
             _initializingNetwork = true;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -44,6 +43,7 @@ namespace Programmka2._0
 
             NetworkIcon.IsChecked = CheckNetworkIcon();
         }
+
 
         private static bool CheckDuplicate()
         {
@@ -174,12 +174,14 @@ namespace Programmka2._0
                 // Добавление или обновление параметра "29"
                 hKey?.SetValue("29", "", RegistryValueKind.String);
             }
+            AnimateButton(LabelArrows);
         }
         private void ReturnLabelArrows(object sender, RoutedEventArgs e)
         {
             if (_initializingLabels) return;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
             Registry.LocalMachine.DeleteSubKeyTree(subKey, throwOnMissingSubKey: false);
+            AnimateButton(LabelArrows);
         }
 
         private void RemoveQuickAccess(object sender, RoutedEventArgs e)
@@ -190,6 +192,7 @@ namespace Programmka2._0
             {
                 hKey?.SetValue("HubMode",1,RegistryValueKind.String);
             }
+            AnimateButton(QuickAccess);
         }
         private void ReturnQuickAccess(object sender, RoutedEventArgs e)
         {
@@ -199,6 +202,7 @@ namespace Programmka2._0
             {
                 hKey?.DeleteValue("HubMode");
             }
+            AnimateButton(QuickAccess);
         }
 
         private void RemoveObjects3D(object sender, RoutedEventArgs e)
@@ -206,6 +210,7 @@ namespace Programmka2._0
             if (_initializingObjects) return;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
             Registry.LocalMachine.DeleteSubKeyTree(subKey, throwOnMissingSubKey: false);
+            AnimateButton(Objects3D);
         }
         private void ReturnObjects3D(object sender, RoutedEventArgs e)
         {
@@ -215,6 +220,7 @@ namespace Programmka2._0
             {
 
             }
+            AnimateButton(Objects3D);
         }
 
         private void RemoveNetworkIcon(object sender, RoutedEventArgs e)
@@ -251,6 +257,7 @@ namespace Programmka2._0
                     process.WaitForExit();
                 }
             }
+            AnimateButton(NetworkIcon);
         }
         private void ReturnNetworkIcon(object sender, RoutedEventArgs e)
         {
@@ -286,6 +293,7 @@ namespace Programmka2._0
                     process.WaitForExit();
                 }
             }
+            AnimateButton(NetworkIcon);
         }
     }
 }
