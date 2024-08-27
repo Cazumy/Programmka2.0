@@ -6,10 +6,12 @@
         xmlns:local="clr-namespace:Programmka2._0"
         mc:Ignorable="d"
         Loaded="MainWindow_Loaded"
-                Title="MainWindow" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="C:\Users\HoMeMem\source\repos\Programmka2.0\RS1.ico">
+        Title="MainWindow" 
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
+        Icon="C:\Users\HoMeMem\source\repos\Programmka2.0\RS1.ico">
     <Window.Resources>
-        <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#496FFF"/>
-        <SolidColorBrush x:Key="SecundaryBackgroundColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#7d7674"/>
+        <SolidColorBrush x:Key="SecundaryBackgroundColor" Color="#f8f8f8"/>
         <SolidColorBrush x:Key="PrimaryBlueColor" Color="#263FAA"/>
         <SolidColorBrush x:Key="PrimaryGrayColor" Color="#64677A"/>
         <SolidColorBrush x:Key="SecundaryBlueColor" Color="#496FFF"/>
@@ -17,7 +19,7 @@
         <SolidColorBrush x:Key="TertiaryBlueColor" Color="#C2D1FC"/>
 
         <Style x:Key="ToggleButtonBackgroundStyle" TargetType="{x:Type ContentControl}">
-            <Setter Property="Height" Value="34"/>
+            <Setter Property="Height" Value="36"/>
             <Setter Property="Width" Value="300"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -25,7 +27,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ContentControl}">
-                        <Border Background="Pink"
+                        <Border Background="#f3bcb9"
                                 CornerRadius="15">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -40,7 +42,7 @@
                                 <TextBlock Grid.Column="1"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Left"
-                                           Text="{TemplateBinding Content}" Margin="32,0,0,0" Cursor=""/>
+                                           Text="{TemplateBinding Content}" Margin="14,0,0,0" Cursor=""/>
                             </Grid>
                         </Border>
                     </ControlTemplate>
@@ -52,7 +54,7 @@
             <Setter Property="BorderBrush" Value="{DynamicResource PrimaryGrayColor}"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="Width" Value="48"/>
-            <Setter Property="Margin" Value="0 2 0 0"/>
+            <Setter Property="Margin" Value="0 0 0 4"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -72,11 +74,9 @@
                             <Ellipse x:Name="ToggleButton"
                                      Height="20"
                                      Width="20"
-                                     VerticalAlignment="Center"
-                                     HorizontalAlignment="Left"
                                      Fill="{DynamicResource SecundaryBackgroundColor}"
                                      Stroke="{TemplateBinding BorderBrush}" 
-                                     StrokeThickness="3">
+                                     StrokeThickness="3" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-1,0,0,0">
                                 <Ellipse.Effect>
                                     <DropShadowEffect ShadowDepth="0.5" Opacity=".2"/>
                                 </Ellipse.Effect>
@@ -95,7 +95,7 @@
                                 Value="{DynamicResource TertiaryBlueColor}"/>
                                 <Setter TargetName="ToggleButton"
                                 Property="Margin"
-                                Value="15 0 0 0"/>
+                                Value="17 0 0 0"/>
                             </Trigger>
                             <Trigger Property="IsChecked" Value="False">
                                 <Setter TargetName="ToggleBorder"
@@ -111,53 +111,92 @@
             </Setter>
         </Style>
 
+        <Style x:Key="ClickButton" TargetType="Button">
+            <Setter Property="Background" Value="LightGray"/>
+            <Setter Property="BorderBrush" Value="DarkGray"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="5 5 5 5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Padding="{TemplateBinding Padding}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="LightBlue"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="DarkBlue"/>
+                                <Setter TargetName="border" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="Black" ShadowDepth=".8" Opacity=".4"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="DarkBlue"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="Black"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
-    <Grid Background="{DynamicResource PrimaryBackgroundColor}">
-        <Canvas Margin="386,190,24,27">
-            <StackPanel Margin="80 5 0 0">
+    <Grid Background="{DynamicResource PrimaryBackgroundColor}" Height="450" Width="800">
+        <Canvas Margin="460,0,0,0" VerticalAlignment="Center">
+            <StackPanel>
                 <ContentControl x:Name="DiskDuplicateBackground" 
                                 Style="{StaticResource ToggleButtonBackgroundStyle}"
                                 local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\disk.png"
-                                Content="DiskDuplications"/>
-                
-                <ContentControl x:Name="LabelArrowsBackground" 
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\label.png"
-                                Content="Arrows on labels"/>
-                
+                                Content="Дубликаты дисков"/>
+
                 <ContentControl x:Name="QuickAccessBackground" 
                                 Style="{StaticResource ToggleButtonBackgroundStyle}"
                                 local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\quick_access.png"
-                                Content="Quick access"/>
-                
+                                Content="Пункт &quot;Быстрый доступ&quot;"/>
+
                 <ContentControl x:Name="Objects3DBackground" 
                                 Style="{StaticResource ToggleButtonBackgroundStyle}"
                                 local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\3d_objects.png"
-                                Content="3D objects"/>
-                
+                                Content="Папка &quot;Объёмные объекты&quot;"/>
+
                 <ContentControl x:Name="NetworkBackground" 
                                 Style="{StaticResource ToggleButtonBackgroundStyle}"
                                 local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\network.png"
-                                Content="Network icon"/>
-            </StackPanel>
+                                Content="Значок &quot;Сеть&quot;"/>
 
-            <StackPanel HorizontalAlignment="Left" Canvas.Left="335" VerticalAlignment="Center">
-                <CheckBox x:Name="DiskDuplicate"
-                          Style="{DynamicResource ToggleButtonStyle}" IsChecked="False" Checked="ReturnDiskDuplicate" Unchecked="RemoveDiskDuplicate"/>
-                <CheckBox x:Name="LabelArrows" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource ToggleButtonStyle}" IsChecked="False" Checked="ReturnLabelArrows" Unchecked="RemoveLabelArrows"/>
-                <CheckBox x:Name="QuickAccess" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource ToggleButtonStyle}" IsChecked="False" Checked="ReturnQuickAccess" Unchecked="RemoveQuickAccess"/>
-                <CheckBox x:Name="Objects3D" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource ToggleButtonStyle}" IsChecked="False" Checked="ReturnObjects3D" Unchecked="RemoveObjects3D"/>
-                <CheckBox x:Name="NetworkIcon" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          Style="{DynamicResource ToggleButtonStyle}" IsChecked="False" Checked="ReturnNetworkIcon" Unchecked="RemoveNetworkIcon"/>
+                <ContentControl x:Name="LabelArrowsBackground" 
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\label.png"
+                                Content="Стрелки на ярлыках"/>
+            </StackPanel>
+            <StackPanel Canvas.Left="252" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.Top="-2">
+                <CheckBox x:Name="DiskDuplicate" Style="{DynamicResource ToggleButtonStyle}" 
+                          IsChecked="False" Checked="ReturnDiskDuplicate" Unchecked="RemoveDiskDuplicate"/>
+                <CheckBox x:Name="LabelArrows" Style="{DynamicResource ToggleButtonStyle}" 
+                          IsChecked="False" Checked="ReturnLabelArrows" Unchecked="RemoveLabelArrows"/>
+                <CheckBox x:Name="QuickAccess" Style="{DynamicResource ToggleButtonStyle}" 
+                          IsChecked="False" Checked="ReturnQuickAccess" Unchecked="RemoveQuickAccess"/>
+                <CheckBox x:Name="Objects3D" Style="{DynamicResource ToggleButtonStyle}" 
+                          IsChecked="False" Checked="ReturnObjects3D" Unchecked="RemoveObjects3D"/>
+                <CheckBox x:Name="NetworkIcon" Style="{DynamicResource ToggleButtonStyle}" 
+                          IsChecked="False" Checked="ReturnNetworkIcon" Unchecked="RemoveNetworkIcon"/>
             </StackPanel>
         </Canvas>
 
-        <Canvas d:IsHidden="True">
+        <Canvas Margin="30,30,495,282">
             <StackPanel>
-
+                <Button x:Name="ActivateWindowsButton" Style="{StaticResource ClickButton}" Content="Windows" Click="ActivateWindows"/>
+                <!-- <Button x:Name="ActivateMicrosoft" Style="{StaticResource ClickButton}" Content="Windows"/> -->
+                <Button x:Name="ActivateWinRarButton" Style="{StaticResource ClickButton}" Content="WinRar" Click="ActivateWinRar"/>
             </StackPanel>
         </Canvas>
     </Grid>

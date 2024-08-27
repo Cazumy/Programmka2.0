@@ -164,7 +164,6 @@ namespace Programmka2._0
             }
             AnimateButton(DiskDuplicate);
         }
-
         private void RemoveLabelArrows(object sender, RoutedEventArgs e)
         {
             if (_initializingLabels) return;
@@ -183,7 +182,6 @@ namespace Programmka2._0
             Registry.LocalMachine.DeleteSubKeyTree(subKey, throwOnMissingSubKey: false);
             AnimateButton(LabelArrows);
         }
-
         private void RemoveQuickAccess(object sender, RoutedEventArgs e)
         {
             if (_initializingAccess) return;
@@ -204,7 +202,6 @@ namespace Programmka2._0
             }
             AnimateButton(QuickAccess);
         }
-
         private void RemoveObjects3D(object sender, RoutedEventArgs e)
         {
             if (_initializingObjects) return;
@@ -222,7 +219,6 @@ namespace Programmka2._0
             }
             AnimateButton(Objects3D);
         }
-
         private void RemoveNetworkIcon(object sender, RoutedEventArgs e)
         {
             if (_initializingNetwork) return;
@@ -294,6 +290,15 @@ namespace Programmka2._0
                 }
             }
             AnimateButton(NetworkIcon);
+        }
+
+        private void ActivateWindows(object sender, RoutedEventArgs e)
+        {
+            
+        }
+        private void ActivateWinRar(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }
