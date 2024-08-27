@@ -17,7 +17,8 @@ namespace Programmka2._0
             _initializingDisk = true,
             _initializingAccess = true,
             _initializingObjects = true,
-            _initializingNetwork = true;
+            _initializingNetwork = true,
+            _initializngWallpaper = true;
         public MainWindow()
         {
             InitializeComponent();
@@ -28,7 +29,7 @@ namespace Programmka2._0
         private void MainWindow_Loaded(object senter, RoutedEventArgs e)
         {
             _initializingLabels = _initializingDisk =
-                _initializingAccess = _initializingObjects = _initializingNetwork = false;
+                _initializingAccess = _initializingObjects = _initializingNetwork = _initializngWallpaper = false;
         }
 
         public void InitializeCheckBoxes()
@@ -113,6 +114,11 @@ namespace Programmka2._0
             return attributes&&isPinned;
         }
 
+        private static bool CheckWallpaperCompression()
+        {
+            return true;
+        }
+
         private static void AnimateButton(CheckBox button)
         {
             Ellipse toggleButton = (Ellipse)button.Template.FindName("ToggleButton", button);
@@ -121,9 +127,9 @@ namespace Programmka2._0
             {
                 ThicknessAnimation animation = new ThicknessAnimation
                 {
-                    From = new Thickness(0, 0, 0, 0),
-                    To = new Thickness(15, 0, 0, 0),
-                    Duration = TimeSpan.FromSeconds(0.15)
+                    From = new Thickness(-1, 0, 0, 0),
+                    To = new Thickness(16, 0, 0, 0),
+                    Duration = TimeSpan.FromSeconds(0.16)
                 };
                 toggleButton.BeginAnimation(Ellipse.MarginProperty, animation);
             }
@@ -131,9 +137,9 @@ namespace Programmka2._0
             {
                 ThicknessAnimation animation = new ThicknessAnimation
                 {
-                    From = new Thickness(15, 0, 0, 0),
-                    To = new Thickness(0, 0, 0, 0),
-                    Duration = TimeSpan.FromSeconds(0.15)
+                    From = new Thickness(16, 0, 0, 0),
+                    To = new Thickness(-1, 0, 0, 0),
+                    Duration = TimeSpan.FromSeconds(0.16)
                 };
                 toggleButton.BeginAnimation(Ellipse.MarginProperty, animation);
             }
@@ -290,6 +296,16 @@ namespace Programmka2._0
                 }
             }
             AnimateButton(NetworkIcon);
+        }
+
+        private void RemoveWallpaperCompression(object sender, RoutedEventArgs e)
+        {
+            if (_initializngWallpaper) return;
+        }
+
+        private void ReturnWallpaperCompression(object sender, RoutedEventArgs e)
+        {
+            if (_initializngWallpaper) return;
         }
 
         private void ActivateWindows(object sender, RoutedEventArgs e)

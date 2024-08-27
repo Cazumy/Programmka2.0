@@ -9,8 +9,17 @@
         Title="MainWindow" 
         ResizeMode="NoResize" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         Icon="C:\Users\HoMeMem\source\repos\Programmka2.0\RS1.ico">
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1"> <!-- Удалить нахуй когда найду норм фото -->
+            <GradientStop Color="#0606" Offset="0.0" />
+            <GradientStop Color="#3434" Offset="0.25" />
+            <GradientStop Color="#7654" Offset="0.5" /> <!-- Основной цвет -->
+            <GradientStop Color="#0987" Offset="0.75" />
+            <GradientStop Color="#9134" Offset="1.0" />
+        </LinearGradientBrush>
+    </Window.Background>
     <Window.Resources>
-        <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#7d7674"/>
+        <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#282828"/>
         <SolidColorBrush x:Key="SecundaryBackgroundColor" Color="#f8f8f8"/>
         <SolidColorBrush x:Key="PrimaryBlueColor" Color="#263FAA"/>
         <SolidColorBrush x:Key="PrimaryGrayColor" Color="#64677A"/>
@@ -53,7 +62,7 @@
             <Setter Property="Background" Value="{DynamicResource SecundaryGrayColor}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource PrimaryGrayColor}"/>
             <Setter Property="Height" Value="40"/>
-            <Setter Property="Width" Value="48"/>
+            <Setter Property="Width" Value="38"/>
             <Setter Property="Margin" Value="0 0 0 4"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
@@ -66,20 +75,16 @@
                                     Height="14"
                                     Width="35"
                                     VerticalAlignment="Center"
-                                    HorizontalAlignment="Left">
-                                <Border.Effect>
-                                    <DropShadowEffect ShadowDepth=".5" Opacity=".2"/>
-                                </Border.Effect>
+                                    HorizontalAlignment="Left"
+                                    BorderThickness="1.6"
+                                    BorderBrush="Black">
                             </Border>
                             <Ellipse x:Name="ToggleButton"
                                      Height="20"
                                      Width="20"
                                      Fill="{DynamicResource SecundaryBackgroundColor}"
                                      Stroke="{TemplateBinding BorderBrush}" 
-                                     StrokeThickness="3" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-1,0,0,0">
-                                <Ellipse.Effect>
-                                    <DropShadowEffect ShadowDepth="0.5" Opacity=".2"/>
-                                </Ellipse.Effect>
+                                     StrokeThickness="3" HorizontalAlignment="Left" VerticalAlignment="Center">
                             </Ellipse>
                         </Grid>
                         <ControlTemplate.Triggers>
@@ -103,7 +108,7 @@
                                 Value="{DynamicResource SecundaryGrayColor}"/>
                                 <Setter TargetName="ToggleButton"
                                 Property="Margin"
-                                Value="0 0 0 0"/>
+                                Value="-1 0 0 0"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -132,11 +137,6 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="LightBlue"/>
                                 <Setter TargetName="border" Property="BorderBrush" Value="DarkBlue"/>
-                                <Setter TargetName="border" Property="Effect">
-                                    <Setter.Value>
-                                        <DropShadowEffect Color="Black" ShadowDepth=".8" Opacity=".4"/>
-                                    </Setter.Value>
-                                </Setter>
                             </Trigger>
 
                             <Trigger Property="IsPressed" Value="True">
@@ -150,8 +150,8 @@
         </Style>
 
     </Window.Resources>
-    <Grid Background="{DynamicResource PrimaryBackgroundColor}" Height="450" Width="800">
-        <Canvas Margin="460,0,0,0" VerticalAlignment="Center">
+    <Grid Height="450" Width="800">
+        <Canvas Margin="460,180,32,0">
             <StackPanel>
                 <ContentControl x:Name="DiskDuplicateBackground" 
                                 Style="{StaticResource ToggleButtonBackgroundStyle}"
@@ -177,6 +177,11 @@
                                 Style="{StaticResource ToggleButtonBackgroundStyle}"
                                 local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\label.png"
                                 Content="Стрелки на ярлыках"/>
+
+                <ContentControl x:Name="WallpaperCompressionBackground" 
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka2.0\WallpaperCompression.png"
+                                Content="Сжатие обоев рабочего стола"/>
             </StackPanel>
             <StackPanel Canvas.Left="252" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.Top="-2">
                 <CheckBox x:Name="DiskDuplicate" Style="{DynamicResource ToggleButtonStyle}" 
@@ -189,6 +194,8 @@
                           IsChecked="False" Checked="ReturnObjects3D" Unchecked="RemoveObjects3D"/>
                 <CheckBox x:Name="NetworkIcon" Style="{DynamicResource ToggleButtonStyle}" 
                           IsChecked="False" Checked="ReturnNetworkIcon" Unchecked="RemoveNetworkIcon"/>
+                <CheckBox x:Name="WallpaperCompression" Style="{DynamicResource ToggleButtonStyle}" 
+                          IsChecked="False" Checked="ReturnWallpaperCompression" Unchecked="RemoveWallpaperCompression"/>
             </StackPanel>
         </Canvas>
 
