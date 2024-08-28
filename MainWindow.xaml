@@ -13,7 +13,7 @@
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1"> <!-- Удалить нахуй когда найду норм фото -->
             <GradientStop Color="#0606" Offset="0.0" />
             <GradientStop Color="#3434" Offset="0.25" />
-            <GradientStop Color="#7654" Offset="0.5" /> <!-- Основной цвет -->
+            <GradientStop Color="#7654" Offset="0.5" />
             <GradientStop Color="#0987" Offset="0.75" />
             <GradientStop Color="#9134" Offset="1.0" />
         </LinearGradientBrush>
@@ -61,19 +61,19 @@
                         <Grid>
                             <Border x:Name="ToggleBorder"
                                     Background="ForestGreen"
-                                    CornerRadius="7"
-                                    Height="14"
+                                    CornerRadius="6.5"
+                                    Height="14.2"
                                     Width="35"
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Left"
                                     BorderThickness="1.6"
-                                    BorderBrush="Black">
+                                    BorderBrush="#333333">
                             </Border>
                             <Ellipse x:Name="ToggleButton"
                                      Height="20"
                                      Width="20"
                                      Fill="DarkGreen"
-                                     Stroke="{TemplateBinding BorderBrush}" 
+                                     Stroke="#333333" 
                                      StrokeThickness="2.6" HorizontalAlignment="Left" VerticalAlignment="Center">
                             </Ellipse>
                         </Grid>
@@ -82,9 +82,6 @@
                                 <Setter TargetName="ToggleButton"
                                 Property="Fill"
                                 Value="DarkRed"/>
-                                <Setter TargetName="ToggleButton"
-                                Property="Stroke"
-                                Value="Black"/>
                                 <Setter TargetName="ToggleBorder"
                                 Property="Background"
                                 Value="IndianRed"/>
@@ -99,6 +96,10 @@
                                 <Setter TargetName="ToggleButton"
                                 Property="Margin"
                                 Value="-1 0 0 0"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ToggleButton" Property="Stroke" Value="Black"/>
+                                <Setter TargetName="ToggleBorder" Property="BorderBrush" Value="Black"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
