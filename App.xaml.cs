@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Programmka2._0
+namespace Programmka
 {
     /// <summary>
     /// Логика взаимодействия для App.xaml

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 
-namespace Programmka2._0
+namespace Programmka
 {
     public class ToggleButtonContent
     {

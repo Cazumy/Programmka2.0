@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programmka2.0", "Programmka2.0.csproj", "{2F7869B7-9545-4008-A488-AB32D7A19A60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programmka", "Programmka.csproj", "{2F7869B7-9545-4008-A488-AB32D7A19A60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,7 +6,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 
-namespace Programmka2._0
+namespace Programmka
 {
     /// <summary>
     ///     Логика взаимодействия для MainWindow.xaml
@@ -34,15 +34,17 @@ namespace Programmka2._0
 
         public void InitializeCheckBoxes()
         {
-            DiskDuplicate.IsChecked = CheckDuplicate();
+            DiskDuplicateButton.IsChecked = CheckDuplicate();
 
-            LabelArrows.IsChecked = CheckLabels();
+            LabelArrowsButton.IsChecked = CheckLabels();
 
-            QuickAccess.IsChecked = CheckQuickAccess();
+            QuickAccessButton.IsChecked = CheckQuickAccess();
 
-            Objects3D.IsChecked = Check3DObjects();
+            Objects3DButton.IsChecked = Check3DObjects();
 
-            NetworkIcon.IsChecked = CheckNetworkIcon();
+            NetworkIconButton.IsChecked = CheckNetworkIcon();
+
+            WallpaperCompressionButton.IsChecked = CheckWallpaperCompression();
         }
 
 
@@ -154,7 +156,7 @@ namespace Programmka2._0
             {
                 key?.DeleteSubKeyTree(keyName, false);
             }
-            AnimateButton(DiskDuplicate);
+            AnimateButton(DiskDuplicateButton);
         }
         private void ReturnDiskDuplicate(object sender, RoutedEventArgs e)
         {
@@ -168,7 +170,7 @@ namespace Programmka2._0
                 var newKey = key.OpenSubKey(keyName, true) ?? key.CreateSubKey(keyName);
                 newKey?.SetValue("", valueData, RegistryValueKind.String);
             }
-            AnimateButton(DiskDuplicate);
+            AnimateButton(DiskDuplicateButton);
         }
         private void RemoveLabelArrows(object sender, RoutedEventArgs e)
         {
@@ -179,14 +181,14 @@ namespace Programmka2._0
                 // Добавление или обновление параметра "29"
                 hKey?.SetValue("29", "", RegistryValueKind.String);
             }
-            AnimateButton(LabelArrows);
+            AnimateButton(LabelArrowsButton);
         }
         private void ReturnLabelArrows(object sender, RoutedEventArgs e)
         {
             if (_initializingLabels) return;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
             Registry.LocalMachine.DeleteSubKeyTree(subKey, throwOnMissingSubKey: false);
-            AnimateButton(LabelArrows);
+            AnimateButton(LabelArrowsButton);
         }
         private void RemoveQuickAccess(object sender, RoutedEventArgs e)
         {
@@ -196,7 +198,7 @@ namespace Programmka2._0
             {
                 hKey?.SetValue("HubMode",1,RegistryValueKind.String);
             }
-            AnimateButton(QuickAccess);
+            AnimateButton(QuickAccessButton);
         }
         private void ReturnQuickAccess(object sender, RoutedEventArgs e)
         {
@@ -206,14 +208,14 @@ namespace Programmka2._0
             {
                 hKey?.DeleteValue("HubMode");
             }
-            AnimateButton(QuickAccess);
+            AnimateButton(QuickAccessButton);
         }
         private void RemoveObjects3D(object sender, RoutedEventArgs e)
         {
             if (_initializingObjects) return;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
             Registry.LocalMachine.DeleteSubKeyTree(subKey, throwOnMissingSubKey: false);
-            AnimateButton(Objects3D);
+            AnimateButton(Objects3DButton);
         }
         private void ReturnObjects3D(object sender, RoutedEventArgs e)
         {
@@ -223,7 +225,7 @@ namespace Programmka2._0
             {
 
             }
-            AnimateButton(Objects3D);
+            AnimateButton(Objects3DButton);
         }
         private void RemoveNetworkIcon(object sender, RoutedEventArgs e)
         {
@@ -259,7 +261,7 @@ namespace Programmka2._0
                     process.WaitForExit();
                 }
             }
-            AnimateButton(NetworkIcon);
+            AnimateButton(NetworkIconButton);
         }
         private void ReturnNetworkIcon(object sender, RoutedEventArgs e)
         {
@@ -295,7 +297,7 @@ namespace Programmka2._0
                     process.WaitForExit();
                 }
             }
-            AnimateButton(NetworkIcon);
+            AnimateButton(NetworkIconButton);
         }
 
         private void RemoveWallpaperCompression(object sender, RoutedEventArgs e)
