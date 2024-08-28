@@ -19,14 +19,6 @@
         </LinearGradientBrush>
     </Window.Background>
     <Window.Resources>
-        <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#282828"/>
-        <SolidColorBrush x:Key="SecundaryBackgroundColor" Color="#f8f8f8"/>
-        <SolidColorBrush x:Key="PrimaryBlueColor" Color="#263FAA"/>
-        <SolidColorBrush x:Key="PrimaryGrayColor" Color="#64677A"/>
-        <SolidColorBrush x:Key="SecundaryBlueColor" Color="#496FFF"/>
-        <SolidColorBrush x:Key="SecundaryGrayColor" Color="#CECECE"/>
-        <SolidColorBrush x:Key="TertiaryBlueColor" Color="#C2D1FC"/>
-
         <Style x:Key="ToggleButtonBackgroundStyle" TargetType="{x:Type ContentControl}">
             <Setter Property="Height" Value="36"/>
             <Setter Property="Width" Value="300"/>
@@ -57,8 +49,7 @@
             </Setter>
         </Style>
         <Style x:Key="ToggleButtonStyle" TargetType="{x:Type CheckBox}">
-            <Setter Property="Background" Value="{DynamicResource SecundaryGrayColor}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryGrayColor}"/>
+            <Setter Property="BorderBrush" Value="Black"/>
             <Setter Property="Height" Value="22"/>
             <Setter Property="Width" Value="40"/>
             <Setter Property="Margin" Value="0 0 10 8"/>
@@ -69,7 +60,7 @@
                     <ControlTemplate TargetType="{x:Type CheckBox}">
                         <Grid>
                             <Border x:Name="ToggleBorder"
-                                    Background="{TemplateBinding Background}"
+                                    Background="ForestGreen"
                                     CornerRadius="7"
                                     Height="14"
                                     Width="35"
@@ -81,7 +72,7 @@
                             <Ellipse x:Name="ToggleButton"
                                      Height="20"
                                      Width="20"
-                                     Fill="{DynamicResource SecundaryBackgroundColor}"
+                                     Fill="DarkGreen"
                                      Stroke="{TemplateBinding BorderBrush}" 
                                      StrokeThickness="2.6" HorizontalAlignment="Left" VerticalAlignment="Center">
                             </Ellipse>
@@ -90,13 +81,13 @@
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter TargetName="ToggleButton"
                                 Property="Fill"
-                                Value="{DynamicResource SecundaryBlueColor}"/>
+                                Value="DarkRed"/>
                                 <Setter TargetName="ToggleButton"
                                 Property="Stroke"
-                                Value="{DynamicResource PrimaryBlueColor}"/>
+                                Value="Black"/>
                                 <Setter TargetName="ToggleBorder"
                                 Property="Background"
-                                Value="{DynamicResource TertiaryBlueColor}"/>
+                                Value="IndianRed"/>
                                 <Setter TargetName="ToggleButton"
                                 Property="Margin"
                                 Value="17 0 0 0"/>
@@ -104,7 +95,7 @@
                             <Trigger Property="IsChecked" Value="False">
                                 <Setter TargetName="ToggleBorder"
                                 Property="Background"
-                                Value="{DynamicResource SecundaryGrayColor}"/>
+                                Value="Green"/>
                                 <Setter TargetName="ToggleButton"
                                 Property="Margin"
                                 Value="-1 0 0 0"/>
@@ -161,41 +152,41 @@
             </Grid>
             <Grid x:Name="QuickAccess">
                 <ContentControl x:Name="QuickAccessBackground" 
-                                                                 Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                                                 local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\quick_access.png"
-                                                                 Content="Пункт &quot;Быстрый доступ&quot;"/>
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\quick_access.png"
+                                Content="Пункт &quot;Быстрый доступ&quot;"/>
                 <CheckBox x:Name="QuickAccessButton" Style="{StaticResource ToggleButtonStyle}" 
                           IsChecked="False" Checked="ReturnQuickAccess" Unchecked="RemoveQuickAccess"/>
             </Grid>
             <Grid x:Name="Objects3D">
-                <ContentControl x:Name="Objects3DBackground" 
-                                                                 Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                                                 local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\3d_objects.png"
-                                                                 Content="Папка &quot;Объёмные объекты&quot;"/>
+                <ContentControl x:Name="Objects3DBackground"
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\3d_objects.png"
+                                Content="Папка &quot;Объёмные объекты&quot;"/>
                 <CheckBox x:Name="Objects3DButton" Style="{StaticResource ToggleButtonStyle}" 
                           IsChecked="False" Checked="ReturnObjects3D" Unchecked="RemoveObjects3D"/>
             </Grid>
             <Grid x:Name="NetworkIcon">
-                <ContentControl x:Name="NetworkBackground" 
-                                                                 Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                                                 local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\network.png"
-                                                                 Content="Значок &quot;Сеть&quot;"/>
+                <ContentControl x:Name="NetworkBackground"
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\network.png"
+                                Content="Значок &quot;Сеть&quot;"/>
                 <CheckBox x:Name="NetworkIconButton" Style="{StaticResource ToggleButtonStyle}" 
                           IsChecked="False" Checked="ReturnNetworkIcon" Unchecked="RemoveNetworkIcon"/>
             </Grid>
             <Grid x:Name="LabelArrows"> 
-                <ContentControl x:Name="LabelArrowsBackground" 
-                                                                  Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                                                  local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\label.png"
-                                                                  Content="Стрелки на ярлыках"/>
+                <ContentControl x:Name="LabelArrowsBackground"
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\label.png"
+                                Content="Стрелки на ярлыках"/>
                 <CheckBox x:Name="LabelArrowsButton" Style="{StaticResource ToggleButtonStyle}" 
                           IsChecked="False" Checked="ReturnLabelArrows" Unchecked="RemoveLabelArrows"/>
             </Grid>
             <Grid x:Name="WallpaperCompression">
                 <ContentControl x:Name="WallpaperCompressionBackground" 
-                                                                 Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                                                 local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\WallpaperCompression.png"
-                                                                 Content="Сжатие обоев рабочего стола"/>
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\WallpaperCompression.png"
+                                Content="Сжатие обоев рабочего стола"/>
                 <CheckBox x:Name="WallpaperCompressionButton" Style="{StaticResource ToggleButtonStyle}" 
                           IsChecked="False" Checked="ReturnWallpaperCompression" Unchecked="RemoveWallpaperCompression"/>
             </Grid>

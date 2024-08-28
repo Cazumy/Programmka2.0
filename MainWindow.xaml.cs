@@ -118,6 +118,18 @@ namespace Programmka
 
         private static bool CheckWallpaperCompression()
         {
+            const string subKey = @"Control Panel\Desktop";
+            using (var key = Registry.CurrentUser.OpenSubKey(subKey))
+            {
+                if (key != null)
+                {
+                    var value = key.GetValue("JPEGImportQuality");
+                    if (value is int intValue)
+                    {
+                        return intValue != 256;
+                    }
+                }
+            }
             return true;
         }
 
@@ -303,11 +315,31 @@ namespace Programmka
         private void RemoveWallpaperCompression(object sender, RoutedEventArgs e)
         {
             if (_initializngWallpaper) return;
+            const string subKey = @"Control Panel\Desktop";
+            using (var key = Registry.CurrentUser.OpenSubKey(subKey, writable: true))
+            {
+                if (key != null)
+                {
+                    key.SetValue("JPEGImportQuality", 100, RegistryValueKind.DWord);
+                }
+                else
+                {
+                    using (var newKey = Registry.CurrentUser.CreateSubKey(subKey))
+                    {
+                        newKey?.SetValue("JPEGImportQuality", 100, RegistryValueKind.DWord);
+                    }
+                }
+            }
         }
 
         private void ReturnWallpaperCompression(object sender, RoutedEventArgs e)
         {
             if (_initializngWallpaper) return;
+            const string subKey = @"Control Panel\Desktop";
+            using (var key = Registry.CurrentUser.OpenSubKey(subKey, writable: true))
+            {
+                key?.SetValue("JPEGImportQuality", 80, RegistryValueKind.DWord);
+            }
         }
 
         private void ActivateWindows(object sender, RoutedEventArgs e)
