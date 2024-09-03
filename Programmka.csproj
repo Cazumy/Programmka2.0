@@ -111,6 +111,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.manifest" />
+    <None Include="Cursors\Pixel_Fun3\PF3C_zlk_AppStart.ani" />
+    <None Include="Cursors\Pixel_Fun3\PF3C_zlk_Click.ani" />
+    <None Include="Cursors\Pixel_Fun3\PF3C_zlk_Wait.ani" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -121,6 +124,36 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="RS1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\desktop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_Arrow.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_Click2.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_Cross.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_Handwrite.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_Help.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_IBream.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_Move.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_NO.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_size_1.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_size_2.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_size_3.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_size_4.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\PF3C_zlk_UpArrow.cur" />
+    <Resource Include="Cursors\Pixel_Fun3\[install].inf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\3d_objects.png" />
+    <Resource Include="Images\activation.png" />
+    <Resource Include="Images\disk.png" />
+    <Resource Include="Images\file_explorer.png" />
+    <Resource Include="Images\label.png" />
+    <Resource Include="Images\network.png" />
+    <Resource Include="Images\quick_access.png" />
+    <Resource Include="Images\RS1.ico" />
+    <Resource Include="Images\WallpaperCompression.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

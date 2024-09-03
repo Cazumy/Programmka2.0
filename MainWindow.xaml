@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:Programmka"
         mc:Ignorable="d"
         Loaded="MainWindow_Loaded"
-        Title="MainWindow" 
+        Title="Programmka" 
         ResizeMode="NoResize" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
-        Icon="C:\Users\HoMeMem\source\repos\Programmka\RS1.ico">
+        Icon="Images\RS1.ico">
     <Window.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1"> <!-- Удалить нахуй когда найду норм фото -->
             <GradientStop Color="#0606" Offset="0.0" />
@@ -36,7 +36,7 @@
                                 <!-- Image -->
                                 <Image Width="34"
                                        Height="34"
-                                       Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:ToggleButtonContent.ImageSource)}" Margin="20,0,0,0" Cursor=""/>
+                                       Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:ToggleButtonContent.ImageSource)}" Margin="20,0,0,0"/>
                                 <!-- Text -->
                                 <TextBlock Grid.Column="1"
                                            VerticalAlignment="Center"
@@ -139,64 +139,104 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+        <Style x:Key="GridForTweaks" TargetType="Grid">
+            <Setter Property="Width" Value="300"></Setter>
+            <Setter Property="Height" Value="46"></Setter>
+        </Style>
+        <Style x:Key="TabItemStyle" TargetType="TabItem">
+            <Setter Property="Height" Value="40"></Setter>
+            <Setter Property="Width" Value="60"></Setter>
+            <Setter Property="Background" Value="Transparent"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border Name="Border">
+                            <Border.Background>
+                                <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:TabItemContent.ImageSource)}" Stretch="UniformToFill"/>
+                            </Border.Background>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              ContentSource="Header"></ContentPresenter>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
-    <Grid Height="450" Width="800">
-        <StackPanel x:Name="Tweaks" Margin="460,160,32,20">
-            <Grid x:Name="DiskDuplicate">
-                <ContentControl x:Name="DiskDuplicateBackground" 
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\disk.png"
-                                Content="Дубликаты дисков"/>
-                <CheckBox x:Name="DiskDuplicateButton" Style="{StaticResource ToggleButtonStyle}" 
-                          IsChecked="False" Checked="ReturnDiskDuplicate" Unchecked="RemoveDiskDuplicate"/>
-            </Grid>
-            <Grid x:Name="QuickAccess">
-                <ContentControl x:Name="QuickAccessBackground" 
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\quick_access.png"
-                                Content="Пункт &quot;Быстрый доступ&quot;"/>
-                <CheckBox x:Name="QuickAccessButton" Style="{StaticResource ToggleButtonStyle}" 
-                          IsChecked="False" Checked="ReturnQuickAccess" Unchecked="RemoveQuickAccess"/>
-            </Grid>
-            <Grid x:Name="Objects3D">
-                <ContentControl x:Name="Objects3DBackground"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\3d_objects.png"
-                                Content="Папка &quot;Объёмные объекты&quot;"/>
-                <CheckBox x:Name="Objects3DButton" Style="{StaticResource ToggleButtonStyle}" 
-                          IsChecked="False" Checked="ReturnObjects3D" Unchecked="RemoveObjects3D"/>
-            </Grid>
-            <Grid x:Name="NetworkIcon">
-                <ContentControl x:Name="NetworkBackground"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\network.png"
-                                Content="Значок &quot;Сеть&quot;"/>
-                <CheckBox x:Name="NetworkIconButton" Style="{StaticResource ToggleButtonStyle}" 
-                          IsChecked="False" Checked="ReturnNetworkIcon" Unchecked="RemoveNetworkIcon"/>
-            </Grid>
-            <Grid x:Name="LabelArrows"> 
-                <ContentControl x:Name="LabelArrowsBackground"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\label.png"
-                                Content="Стрелки на ярлыках"/>
-                <CheckBox x:Name="LabelArrowsButton" Style="{StaticResource ToggleButtonStyle}" 
-                          IsChecked="False" Checked="ReturnLabelArrows" Unchecked="RemoveLabelArrows"/>
-            </Grid>
-            <Grid x:Name="WallpaperCompression">
-                <ContentControl x:Name="WallpaperCompressionBackground" 
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                local:ToggleButtonContent.ImageSource="C:\Users\HoMeMem\source\repos\Programmka\WallpaperCompression.png"
-                                Content="Сжатие обоев рабочего стола"/>
-                <CheckBox x:Name="WallpaperCompressionButton" Style="{StaticResource ToggleButtonStyle}" 
-                          IsChecked="False" Checked="ReturnWallpaperCompression" Unchecked="RemoveWallpaperCompression"/>
-            </Grid>
-        </StackPanel>
-
-        <StackPanel x:Name="ActivateSheet" Margin="30,30,665,250">
-            <Button x:Name="ActivateWindowsButton" Style="{StaticResource ClickButton}" Content="Windows" Click="ActivateWindows"/>
-            <!-- <Button x:Name="ActivateMicrosoft" Style="{StaticResource ClickButton}" Content="Windows"/> -->
-            <Button x:Name="ActivateWinRarButton" Style="{StaticResource ClickButton}" Content="WinRar" Click="ActivateWinRar"/>
-        </StackPanel>
+    <Grid Height="450" Width="880">
+        <TabControl TabStripPlacement="Top" Background="Transparent">
+            <TabItem Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images/file_explorer.png">
+                <Grid>
+                    <StackPanel x:Name="Tweaks" Margin="460,140,32,20">
+                        <Grid x:Name="DiskDuplicate" Style="{StaticResource GridForTweaks}">
+                            <ContentControl x:Name="DiskDuplicateBackground" 
+                                      Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                      local:ToggleButtonContent.ImageSource="Images\disk.png"
+                                      Content="Дубликаты дисков"/>
+                            <CheckBox x:Name="DiskDuplicateButton" Style="{StaticResource ToggleButtonStyle}" 
+                                      IsChecked="False" Checked="ReturnDiskDuplicate" Unchecked="RemoveDiskDuplicate"/>
+                        </Grid>
+                        <Grid x:Name="QuickAccess" Style="{StaticResource GridForTweaks}">
+                            <ContentControl x:Name="QuickAccessBackground" 
+                                            Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                            local:ToggleButtonContent.ImageSource="Images\quick_access.png"
+                                            Content="Пункт &quot;Быстрый доступ&quot;"/>
+                            <CheckBox x:Name="QuickAccessButton" Style="{StaticResource ToggleButtonStyle}" 
+                                      IsChecked="False" Checked="ReturnQuickAccess" Unchecked="RemoveQuickAccess"/>
+                        </Grid>
+                        <Grid x:Name="Objects3D" Style="{StaticResource GridForTweaks}">
+                            <ContentControl x:Name="Objects3DBackground"
+                                            Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                            local:ToggleButtonContent.ImageSource="Images\3d_objects.png"
+                                            Content="Папка &quot;Объёмные объекты&quot;"/>
+                            <CheckBox x:Name="Objects3DButton" Style="{StaticResource ToggleButtonStyle}" 
+                                      IsChecked="False" Checked="ReturnObjects3D" Unchecked="RemoveObjects3D"/>
+                        </Grid>
+                        <Grid x:Name="NetworkIcon" Style="{StaticResource GridForTweaks}">
+                            <ContentControl x:Name="NetworkBackground"
+                                            Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                            local:ToggleButtonContent.ImageSource="Images\network.png"
+                                            Content="Значок &quot;Сеть&quot;"/>
+                            <CheckBox x:Name="NetworkIconButton" Style="{StaticResource ToggleButtonStyle}" 
+                                      IsChecked="False" Checked="ReturnNetworkIcon" Unchecked="RemoveNetworkIcon"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images/desktop.png">
+                <StackPanel x:Name="Desktop" Margin="460,140,32,20">
+                    <Grid x:Name="LabelArrows" Style="{StaticResource GridForTweaks}">
+                        <ContentControl x:Name="LabelArrowsBackground"
+                                        Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                        local:ToggleButtonContent.ImageSource="Images\label.png"
+                                        Content="Стрелки на ярлыках"/>
+                        <CheckBox x:Name="LabelArrowsButton" Style="{StaticResource ToggleButtonStyle}" 
+                                  IsChecked="False" Checked="ReturnLabelArrows" Unchecked="RemoveLabelArrows"/>
+                    </Grid>
+                    <Grid x:Name="WallpaperCompression" Style="{StaticResource GridForTweaks}">
+                        <ContentControl x:Name="WallpaperCompressionBackground" 
+                                        Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                        local:ToggleButtonContent.ImageSource="Images\WallpaperCompression.png"
+                                        Content="Сжатие обоев рабочего стола"/>
+                        <CheckBox x:Name="WallpaperCompressionButton" Style="{StaticResource ToggleButtonStyle}" 
+                                  IsChecked="False" Checked="ReturnWallpaperCompression" Unchecked="RemoveWallpaperCompression"/>
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+            <TabItem Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images/activation.png">
+                <StackPanel x:Name="ActivateSheet" Margin="30,30,665,250">
+                    <Button x:Name="ActivateWindowsButton" Style="{StaticResource ClickButton}" Content="Windows" Click="ActivateWindows"/>
+                    <!-- <Button x:Name="ActivateMicrosoft" Style="{StaticResource ClickButton}" Content="Windows"/> -->
+                    <Button x:Name="ActivateWinRarButton" Style="{StaticResource ClickButton}" Content="WinRar" Click="ActivateWinRar"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

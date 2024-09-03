@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
@@ -46,7 +45,6 @@ namespace Programmka
 
             WallpaperCompressionButton.IsChecked = CheckWallpaperCompression();
         }
-
 
         private static bool CheckDuplicate()
         {
@@ -232,7 +230,7 @@ namespace Programmka
         {
             if (_initializingObjects) return;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
-            using (var hKey = Registry.LocalMachine.CreateSubKey(subKey))
+            using (Registry.LocalMachine.CreateSubKey(subKey))
             {
 
             }
@@ -282,7 +280,7 @@ namespace Programmka
             if (_initializngWallpaper) return;
 
             Functions wc = new Functions();
-            wc.SetWallpaperCompressionQuality(100);
+            wc.SetWallpaperCompressionQuality(256);
 
             AnimateButton(WallpaperCompressionButton);
         }
@@ -292,7 +290,7 @@ namespace Programmka
             if (_initializngWallpaper) return;
 
             Functions wc = new Functions();
-            wc.SetWallpaperCompressionQuality(80);
+            wc.SetWallpaperCompressionQuality(128);
 
             AnimateButton(WallpaperCompressionButton);
         }
@@ -305,5 +303,7 @@ namespace Programmka
         {
             
         }
+
+
     }
 }
