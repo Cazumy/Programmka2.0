@@ -144,25 +144,29 @@
             <Setter Property="Height" Value="46"></Setter>
         </Style>
         <Style x:Key="TabItemStyle" TargetType="TabItem">
-            <Setter Property="Height" Value="40"></Setter>
-            <Setter Property="Width" Value="60"></Setter>
-            <Setter Property="Background" Value="Transparent"></Setter>
+            <Setter Property="Height" Value="60"></Setter>
+            <Setter Property="Width" Value="64"></Setter>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
-                        <Border Name="Border">
-                            <Border.Background>
-                                <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:TabItemContent.ImageSource)}" Stretch="UniformToFill"/>
+                        <Border Name="Border" BorderThickness="3" BorderBrush="#2f2820" Margin="4 10 4 0" Padding="0">
+                            <Border.Background >
+                                <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:TabItemContent.ImageSource)}" Stretch="Fill"/>
                             </Border.Background>
                             <ContentPresenter x:Name="ContentPresenter"
                                               ContentSource="Header"></ContentPresenter>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#5f2820"/>
+                                <Setter Property="Width" Value="100"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#8f2820"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -171,7 +175,7 @@
         </Style>
     </Window.Resources>
     <Grid Height="450" Width="880">
-        <TabControl TabStripPlacement="Top" Background="Transparent">
+        <TabControl TabStripPlacement="Left" Background="Transparent">
             <TabItem Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images/file_explorer.png">
                 <Grid>
                     <StackPanel x:Name="Tweaks" Margin="460,140,32,20">
