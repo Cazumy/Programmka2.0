@@ -1,16 +1,19 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Management;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using Microsoft.Win32;
 
 namespace Programmka;
-public partial class MainWindow : Window
+public partial class MainWindow : MetroWindow
 {
     private bool _initializingLabels = true,
         _initializingDisk = true,
@@ -31,15 +34,10 @@ public partial class MainWindow : Window
     public void InitializeCheckBoxes()
     {
         DiskDuplicateButton.IsChecked = CheckDuplicate();
-
         LabelArrowsButton.IsChecked = CheckLabels();
-
         QuickAccessButton.IsChecked = CheckQuickAccess();
-
         Objects3DButton.IsChecked = Check3DObjects();
-
         NetworkIconButton.IsChecked = CheckNetworkIcon();
-
         WallpaperCompressionButton.IsChecked = CheckWallpaperCompression();
     }
     #region checks for checkboxes
@@ -215,6 +213,14 @@ public partial class MainWindow : Window
         };
         Methods.RunInCMD(commands);
     }
+    private void ReloadExplorer(object sender, RoutedEventArgs e)
+    {
+        foreach (var process in Process.GetProcessesByName("explorer"))
+        {
+            process.Kill();
+        }
+        Process.Start("explorer.exe");
+    }
     #endregion
     #region desktop tweaks
     private void RemoveLabelArrows(object sender, RoutedEventArgs e)
@@ -256,14 +262,14 @@ public partial class MainWindow : Window
     #region activation tweaks
     private void ActivateWindows(object sender, RoutedEventArgs e)
     {
-        System.Windows.Forms.MessageBox.Show("Нажмите на клавиатуре клавишу \"1\" для активации Windows или клавишу \"2\" для активации продуктов Office","Когда откроется окно с выбором для активации");
+        System.Windows.Forms.MessageBox.Show("Нажмите на клавиатуре клавишу \"1\" для активации Windows или клавишу \"2\" для активации продуктов Office", "Когда откроется окно с выбором для активации");
         var cmdProcessInfo = new ProcessStartInfo
         {
             FileName = "cmd.exe",
-            Arguments = "/c powershell.exe -Command \"irm https://massgrave.dev/get | iex\"", 
-            Verb = "runas", 
-            UseShellExecute = false, 
-            CreateNoWindow = true 
+            Arguments = "/c powershell.exe -Command \"irm https://massgrave.dev/get | iex\"",
+            Verb = "runas",
+            UseShellExecute = false,
+            CreateNoWindow = true
         };
         Process.Start(cmdProcessInfo);
     }
@@ -272,10 +278,14 @@ public partial class MainWindow : Window
         var result = System.Windows.Forms.MessageBox.Show(
         "Вы меняли директорию по умолчанию для установки WINRAR?",
         "Ответьте на вопрос",
-        System.Windows.Forms.MessageBoxButtons.YesNo,
+        System.Windows.Forms.MessageBoxButtons.YesNoCancel,
         System.Windows.Forms.MessageBoxIcon.Question
-    );
+        );
         string path;
+        if (result == System.Windows.Forms.DialogResult.Cancel)
+        {
+            return;
+        }
         if (result == System.Windows.Forms.DialogResult.Yes)
         {
             path = ExplorerDialog.OpenFolderDialog();
@@ -295,17 +305,18 @@ ed467e6e4f126e19cccccf98c3b9f98c4660341d700d11a5c1aa52
 be9caf70ca9cee8199c54758f64acc9c27d3968d5e69ecb901b91d
 538d079f9f1fd1a81d656627d962bf547c38ebbda774df21605c33
 eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
-        File.WriteAllText(path+@"\rarreg.key.txt", key);
+        File.WriteAllText(path + @"\rarreg.key.txt", key);
     }
     #endregion
     #region fix tweaks
     private void FixHardDisks(object sender, RoutedEventArgs e)
     {
-        string command = "reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\storahci\\Parameters\\Device\" /f /v TreatAsInternalPort /t REG_MULTI_SZ /d ";
-        if (BusNumberInput.Text != "" && int.TryParse(BusNumberInput.Text, out _))
-        {
-            command += BusNumberInput.Text;
-        }
+        string command = "reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\storahci\\Parameters\\Device\" /f /v TreatAsInternalPort /t REG_MULTI_SZ /d \"0\\0 1\\0 2\\0 3\\0 4\\0 5\\0 6\\0 7\\0 8\\0 9\\0 10\\0 11\\0 12\\0 13\\0 14\\0 15\\0 16";
+        Methods.RunInCMD(command);
+    }
+    private void RemoveFixHardDisks(object sender, RoutedEventArgs e)
+    {
+        string command = "reg delete \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\storahci\\Parameters\\Device\" /v TreatAsInternalPort /f\r\n";
         Methods.RunInCMD(command);
     }
     #endregion

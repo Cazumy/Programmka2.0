@@ -1,22 +1,24 @@
-﻿<Window x:Class="Programmka.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Programmka"
-        mc:Ignorable="d"
-        Loaded="MainWindow_Loaded"
-        Title="Programmka" 
-        ResizeMode="NoResize" 
-        WindowStartupLocation="CenterScreen" 
-        SizeToContent="WidthAndHeight">
-    <Window.Background>
-        <SolidColorBrush Color="#FF290029"/>
-    </Window.Background>
-    <Window.Resources>
-        <Style x:Key="GridForTweaks" TargetType="Grid">
-            <Setter Property="Width" Value="300"></Setter>
-            <Setter Property="Height" Value="46"></Setter>
+﻿<mah:MetroWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:local="clr-namespace:Programmka"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 x:Class="Programmka.MainWindow"
+                 mc:Ignorable="d"
+                 Loaded="MainWindow_Loaded"
+                 Title="Programmka" 
+                 ResizeMode="NoResize" 
+                 WindowStartupLocation="CenterScreen"
+                 SizeToContent="WidthAndHeight" 
+                 Background="#FF290029"
+                 TitleForeground="#FF956C98"
+                 WindowTitleBrush="#FF170117">
+    <mah:MetroWindow.Resources>
+
+        <Style x:Key="GridForTweaks" TargetType="{x:Type Grid}">
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Height" Value="46"/>
         </Style>
         <Style x:Key="ToggleButtonBackgroundStyle" TargetType="{x:Type ContentControl}">
             <Setter Property="Height" Value="36"/>
@@ -31,13 +33,13 @@
                                 BorderBrush="#FF2B1C1C">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <!-- Image -->
                                 <Image Width="34"
                                        Height="34"
-                                       Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:ToggleButtonContent.ImageSource)}" Margin="20,0,0,0"/>
+                                       Source="{Binding (local:ToggleButtonContent.ImageSource), RelativeSource={RelativeSource Mode=TemplatedParent}}" Margin="20,0,0,0"/>
                                 <!-- Text -->
                                 <TextBlock Grid.Column="1"
                                            VerticalAlignment="Center"
@@ -68,15 +70,13 @@
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Left"
                                     BorderThickness="1.5"
-                                    BorderBrush="Black">
-                            </Border>
+                                    BorderBrush="Black"/>
                             <Ellipse x:Name="ToggleButton"
                                      Height="20"
                                      Width="20"
                                      Fill="#FF0F730F"
                                      Stroke="Black" 
-                                     StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center">
-                            </Ellipse>
+                                     StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
@@ -108,47 +108,14 @@
             </Setter>
         </Style>
 
-        <Style x:Key="ClickButton" TargetType="Button">
-            <Setter Property="Background" Value="LightGray"/>
-            <Setter Property="BorderBrush" Value="DarkGray"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Margin" Value="5 5 5 5"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                Padding="{TemplateBinding Padding}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
-                            <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="LightBlue"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="DarkBlue"/>
-                            </Trigger>
-
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="DarkBlue"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="Black"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="TabItemStyle" TargetType="TabItem">
+        <Style x:Key="TabItemStyle" TargetType="{x:Type TabItem}">
             <Setter Property="Height" Value="64" />
             <Setter Property="Width" Value="56" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="TabItem">
-                        <Border Name="tabItemBackground" 
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Border x:Name="tabItemBackground" 
                                 Background="#FF5D0049" 
                                 Margin="4 6 6 6" 
                                 CornerRadius="6" 
@@ -158,7 +125,7 @@
                                 MouseEnter="TabItem_MouseEnter"
                                 MouseLeave="TabItem_MouseLeave">
                             <Grid>
-                                <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:TabItemContent.ImageSource)}" 
+                                <Image Source="{Binding (local:TabItemContent.ImageSource), RelativeSource={RelativeSource Mode=TemplatedParent}}" 
                                        Stretch="Fill" 
                                        HorizontalAlignment="Center" 
                                        VerticalAlignment="Center" 
@@ -178,19 +145,19 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="TabContentBorderStyle" TargetType="Border">
+        <Style x:Key="TabContentBorderStyle" TargetType="{x:Type Border}">
             <Setter Property="CornerRadius" Value="4"/>
             <Setter Property="BorderThickness"  Value="3px" />
             <Setter Property="BorderBrush"  Value="#1b0000"/>
             <Setter Property="Background">
                 <Setter.Value>
-                    <ImageBrush ImageSource="Images\background.jpg"/>
+                    <ImageBrush ImageSource="Resources\Images\background.jpg"/>
                 </Setter.Value>
             </Setter>
         </Style>
-    </Window.Resources>
+    </mah:MetroWindow.Resources>
     <Grid Height="450" Width="880">
-        <Image Source="Images/win10.png" HorizontalAlignment="Right" VerticalAlignment="Top" Height="50px" Margin="8"/>
+        <Image Source="Resources\Images/win10.png" HorizontalAlignment="Right" VerticalAlignment="Top" Height="50px" Margin="8"/>
         <TextBlock x:Name="tabItemDescription" 
                    VerticalAlignment="Top" 
                    HorizontalAlignment="Right" 
@@ -202,12 +169,12 @@
                    Height="30" 
                    TextWrapping="WrapWithOverflow"/>
         <TabControl TabStripPlacement="Top" Background="Transparent" Margin="16 0 16 8" BorderThickness="0">
-            <TabItem x:Name="fileExplorerItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images\file_explorer.png">
+            <TabItem x:Name="fileExplorerItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images\file_explorer.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
-                    <StackPanel Margin="460,140,32,20">
+                    <StackPanel Margin="460,120,32,20">
                         <Grid Style="{StaticResource GridForTweaks}">
                             <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Images\disk.png"
+                                            local:ToggleButtonContent.ImageSource="Resources\Images\disk.png"
                                             Content="Дубликаты дисков"/>
                             <CheckBox x:Name="DiskDuplicateButton" 
                                       Style="{StaticResource ToggleButtonStyle}" 
@@ -217,7 +184,7 @@
                         </Grid>
                         <Grid Style="{StaticResource GridForTweaks}">
                             <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Images\quick_access.png"
+                                            local:ToggleButtonContent.ImageSource="Resources\Images\quick_access.png"
                                             Content="Пункт &quot;Быстрый доступ&quot;"/>
                             <CheckBox x:Name="QuickAccessButton" 
                                       Style="{StaticResource ToggleButtonStyle}" 
@@ -227,7 +194,7 @@
                         </Grid>
                         <Grid Style="{StaticResource GridForTweaks}">
                             <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Images\3d_objects.png"
+                                            local:ToggleButtonContent.ImageSource="Resources\Images\3d_objects.png"
                                             Content="Папка &quot;Объёмные объекты&quot;"/>
                             <CheckBox x:Name="Objects3DButton" 
                                       Style="{StaticResource ToggleButtonStyle}" 
@@ -237,7 +204,7 @@
                         </Grid>
                         <Grid Style="{StaticResource GridForTweaks}">
                             <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Images\network.png"
+                                            local:ToggleButtonContent.ImageSource="Resources\Images\network.png"
                                             Content="Значок &quot;Сеть&quot;"/>
                             <CheckBox x:Name="NetworkIconButton" 
                                       Style="{StaticResource ToggleButtonStyle}" 
@@ -245,15 +212,18 @@
                                       Checked="ReturnNetworkIcon" 
                                       Unchecked="RemoveNetworkIcon"/>
                         </Grid>
+                        <Grid Style="{StaticResource GridForTweaks}">
+                            <Button Click="ReloadExplorer" Content="Перезагрузить проводник"/>
+                        </Grid>
                     </StackPanel>
                 </Border>
             </TabItem>
-            <TabItem x:Name="desktopItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images\desktop.png">
+            <TabItem x:Name="desktopItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images\desktop.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
                     <StackPanel Margin="460,140,32,20">
                         <Grid Style="{StaticResource GridForTweaks}">
                             <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Images\label.png"
+                                            local:ToggleButtonContent.ImageSource="Resources\Images\label.png"
                                             Content="Стрелки на ярлыках"/>
                             <CheckBox x:Name="LabelArrowsButton" 
                                       Style="{StaticResource ToggleButtonStyle}" 
@@ -263,7 +233,7 @@
                         </Grid>
                         <Grid Style="{StaticResource GridForTweaks}">
                             <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Images\WallpaperCompression.png"
+                                            local:ToggleButtonContent.ImageSource="Resources\Images\WallpaperCompression.png"
                                             Content="Сжатие обоев рабочего стола"/>
                             <CheckBox x:Name="WallpaperCompressionButton" 
                                       Style="{StaticResource ToggleButtonStyle}" 
@@ -275,22 +245,27 @@
                     </StackPanel>
                 </Border>
             </TabItem>
-            <TabItem x:Name="activationItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images/activation.png">
+            <TabItem x:Name="activationItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images/activation.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
                     <StackPanel Margin="30,30,665,220">
-                        <Button x:Name="ActivateWindowsButton" Style="{StaticResource ClickButton}" Content="Windows\Office" Click="ActivateWindows" Cursor="Hand"/>
-                        <Button x:Name="ActivateWinRarButton" Style="{StaticResource ClickButton}" Content="WinRar" Click="ActivateWinRar"/>
+                        <Button x:Name="ActivateWindowsButton" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Content="Windows\Office" Click="ActivateWindows" Cursor="Hand" Margin="0 0 0 20"/>
+                        <Button x:Name="ActivateWinRarButton" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Content="WinRar" Click="ActivateWinRar" Cursor="Hand"/>
                     </StackPanel>
                 </Border>
             </TabItem>
-            <TabItem x:Name="fixesItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images/fix.png">
+            <TabItem x:Name="fixesItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images/fix.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
-                    <StackPanel Margin="0 20 0 300" Width="204" HorizontalAlignment="Left">
-                        <TextBox x:Name="BusNumberInput" HorizontalAlignment="Left" Width="100"/>
-                        <Button x:Name="FixDisksButton" Style="{StaticResource ClickButton}" Content="Apply" Click="FixHardDisks" HorizontalAlignment="Right" Width="54" Height="16" Margin="0 -20 20 0"/>
+                    <StackPanel Height="166" Margin="20,20,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <TextBlock Text="Внутренние диски SATA отображаются как съемные носители" Foreground="White" FontSize="14"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Content="Fix" Click="FixHardDisks" Width="76" Height="44"  VerticalAlignment="Top" Margin="0 0 30 0" Cursor="Hand"/>
+                            <Button Content="Undo fix" Click="RemoveFixHardDisks" Width="76" Height="44" VerticalAlignment="Top" Cursor="Hand"/>
+                        </StackPanel>
+                        <TextBlock Text="Пропали иконки, остались только имена ярлыков и папок" Margin="0 20 0 0" Foreground="White" FontSize="14"/>
+                        <Button Content="Fix" Width="80" Height="40" Click="ReturnLabelArrows" Cursor="Hand"/>
                     </StackPanel>
                 </Border>
             </TabItem>
         </TabControl>
     </Grid>
-</Window>
+</mah:MetroWindow>
