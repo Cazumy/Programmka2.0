@@ -7,18 +7,17 @@
         mc:Ignorable="d"
         Loaded="MainWindow_Loaded"
         Title="Programmka" 
-        ResizeMode="NoResize" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
-        Icon="Images\RS1.ico">
+        ResizeMode="NoResize" 
+        WindowStartupLocation="CenterScreen" 
+        SizeToContent="WidthAndHeight">
     <Window.Background>
-        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1"> <!-- Удалить нахуй когда найду норм фото -->
-            <GradientStop Color="#0606" Offset="0.0" />
-            <GradientStop Color="#3434" Offset="0.25" />
-            <GradientStop Color="#7654" Offset="0.5" />
-            <GradientStop Color="#0987" Offset="0.75" />
-            <GradientStop Color="#9134" Offset="1.0" />
-        </LinearGradientBrush>
+        <SolidColorBrush Color="#FF290029"/>
     </Window.Background>
     <Window.Resources>
+        <Style x:Key="GridForTweaks" TargetType="Grid">
+            <Setter Property="Width" Value="300"></Setter>
+            <Setter Property="Height" Value="46"></Setter>
+        </Style>
         <Style x:Key="ToggleButtonBackgroundStyle" TargetType="{x:Type ContentControl}">
             <Setter Property="Height" Value="36"/>
             <Setter Property="Width" Value="300"/>
@@ -26,8 +25,10 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ContentControl}">
-                        <Border Background="#f3bcb9"
-                                CornerRadius="15">
+                        <Border Background="#FFFFC3BF"
+                                CornerRadius="15"
+                                BorderThickness="1.4"
+                                BorderBrush="#FF2B1C1C">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -41,7 +42,7 @@
                                 <TextBlock Grid.Column="1"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Left"
-                                           Text="{TemplateBinding Content}" Margin="14,0,0,0" Cursor=""/>
+                                           Text="{TemplateBinding Content}" Margin="14 0 0 0" FontFamily="MV Boli"/>
                             </Grid>
                         </Border>
                     </ControlTemplate>
@@ -61,20 +62,20 @@
                         <Grid>
                             <Border x:Name="ToggleBorder"
                                     Background="ForestGreen"
-                                    CornerRadius="6.5"
-                                    Height="14.2"
+                                    CornerRadius="7"
+                                    Height="14.5"
                                     Width="35"
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Left"
-                                    BorderThickness="1.6"
-                                    BorderBrush="#333333">
+                                    BorderThickness="1.5"
+                                    BorderBrush="Black">
                             </Border>
                             <Ellipse x:Name="ToggleButton"
                                      Height="20"
                                      Width="20"
-                                     Fill="DarkGreen"
-                                     Stroke="#333333" 
-                                     StrokeThickness="2.6" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                     Fill="#FF0F730F"
+                                     Stroke="Black" 
+                                     StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center">
                             </Ellipse>
                         </Grid>
                         <ControlTemplate.Triggers>
@@ -139,107 +140,156 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="GridForTweaks" TargetType="Grid">
-            <Setter Property="Width" Value="300"></Setter>
-            <Setter Property="Height" Value="46"></Setter>
-        </Style>
+
         <Style x:Key="TabItemStyle" TargetType="TabItem">
-            <Setter Property="Height" Value="60"></Setter>
-            <Setter Property="Width" Value="64"></Setter>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Height" Value="64" />
+            <Setter Property="Width" Value="56" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
-                        <Border Name="Border" BorderThickness="3" BorderBrush="#2f2820" Margin="4 10 4 0" Padding="0">
-                            <Border.Background >
-                                <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:TabItemContent.ImageSource)}" Stretch="Fill"/>
-                            </Border.Background>
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              ContentSource="Header"></ContentPresenter>
+                        <Border Name="tabItemBackground" 
+                                Background="#FF5D0049" 
+                                Margin="4 6 6 6" 
+                                CornerRadius="6" 
+                                BorderThickness="2" 
+                                BorderBrush="#FF21031A" 
+                                Cursor="Hand"
+                                MouseEnter="TabItem_MouseEnter"
+                                MouseLeave="TabItem_MouseLeave">
+                            <Grid>
+                                <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:TabItemContent.ImageSource)}" 
+                                       Stretch="Fill" 
+                                       HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center" 
+                                       Margin="3" />
+                                <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Cursor" Value="Hand"/>
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#5f2820"/>
-                                <Setter Property="Width" Value="100"/>
+                                <Setter TargetName="tabItemBackground" Property="Background" Value="#FF7A0049" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Cursor" Value="Hand"/>
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#8f2820"/>
+                                <Setter TargetName="tabItemBackground" Property="Background" Value="#FF3C0330" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="TabContentBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="BorderThickness"  Value="3px" />
+            <Setter Property="BorderBrush"  Value="#1b0000"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <ImageBrush ImageSource="Images\background.jpg"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Grid Height="450" Width="880">
-        <TabControl TabStripPlacement="Left" Background="Transparent">
-            <TabItem Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images/file_explorer.png">
-                <Grid>
-                    <StackPanel x:Name="Tweaks" Margin="460,140,32,20">
-                        <Grid x:Name="DiskDuplicate" Style="{StaticResource GridForTweaks}">
-                            <ContentControl x:Name="DiskDuplicateBackground" 
-                                      Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                      local:ToggleButtonContent.ImageSource="Images\disk.png"
-                                      Content="Дубликаты дисков"/>
-                            <CheckBox x:Name="DiskDuplicateButton" Style="{StaticResource ToggleButtonStyle}" 
-                                      IsChecked="False" Checked="ReturnDiskDuplicate" Unchecked="RemoveDiskDuplicate"/>
+        <Image Source="Images/win10.png" HorizontalAlignment="Right" VerticalAlignment="Top" Height="50px" Margin="8"/>
+        <TextBlock x:Name="tabItemDescription" 
+                   VerticalAlignment="Top" 
+                   HorizontalAlignment="Right" 
+                   FontSize="16" 
+                   Margin="0 22 50 0"
+                   FontFamily="MV Boli" 
+                   Foreground="White" 
+                   Width="280" 
+                   Height="30" 
+                   TextWrapping="WrapWithOverflow"/>
+        <TabControl TabStripPlacement="Top" Background="Transparent" Margin="16 0 16 8" BorderThickness="0">
+            <TabItem x:Name="fileExplorerItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images\file_explorer.png">
+                <Border Style="{StaticResource TabContentBorderStyle}">
+                    <StackPanel Margin="460,140,32,20">
+                        <Grid Style="{StaticResource GridForTweaks}">
+                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                            local:ToggleButtonContent.ImageSource="Images\disk.png"
+                                            Content="Дубликаты дисков"/>
+                            <CheckBox x:Name="DiskDuplicateButton" 
+                                      Style="{StaticResource ToggleButtonStyle}" 
+                                      IsChecked="False" 
+                                      Checked="ReturnDiskDuplicate"
+                                      Unchecked="RemoveDiskDuplicate"/>
                         </Grid>
-                        <Grid x:Name="QuickAccess" Style="{StaticResource GridForTweaks}">
-                            <ContentControl x:Name="QuickAccessBackground" 
-                                            Style="{StaticResource ToggleButtonBackgroundStyle}"
+                        <Grid Style="{StaticResource GridForTweaks}">
+                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
                                             local:ToggleButtonContent.ImageSource="Images\quick_access.png"
                                             Content="Пункт &quot;Быстрый доступ&quot;"/>
-                            <CheckBox x:Name="QuickAccessButton" Style="{StaticResource ToggleButtonStyle}" 
-                                      IsChecked="False" Checked="ReturnQuickAccess" Unchecked="RemoveQuickAccess"/>
+                            <CheckBox x:Name="QuickAccessButton" 
+                                      Style="{StaticResource ToggleButtonStyle}" 
+                                      IsChecked="False" 
+                                      Checked="ReturnQuickAccess" 
+                                      Unchecked="RemoveQuickAccess"/>
                         </Grid>
-                        <Grid x:Name="Objects3D" Style="{StaticResource GridForTweaks}">
-                            <ContentControl x:Name="Objects3DBackground"
-                                            Style="{StaticResource ToggleButtonBackgroundStyle}"
+                        <Grid Style="{StaticResource GridForTweaks}">
+                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
                                             local:ToggleButtonContent.ImageSource="Images\3d_objects.png"
                                             Content="Папка &quot;Объёмные объекты&quot;"/>
-                            <CheckBox x:Name="Objects3DButton" Style="{StaticResource ToggleButtonStyle}" 
-                                      IsChecked="False" Checked="ReturnObjects3D" Unchecked="RemoveObjects3D"/>
+                            <CheckBox x:Name="Objects3DButton" 
+                                      Style="{StaticResource ToggleButtonStyle}" 
+                                      IsChecked="False" 
+                                      Checked="ReturnObjects3D" 
+                                      Unchecked="RemoveObjects3D"/>
                         </Grid>
-                        <Grid x:Name="NetworkIcon" Style="{StaticResource GridForTweaks}">
-                            <ContentControl x:Name="NetworkBackground"
-                                            Style="{StaticResource ToggleButtonBackgroundStyle}"
+                        <Grid Style="{StaticResource GridForTweaks}">
+                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
                                             local:ToggleButtonContent.ImageSource="Images\network.png"
                                             Content="Значок &quot;Сеть&quot;"/>
-                            <CheckBox x:Name="NetworkIconButton" Style="{StaticResource ToggleButtonStyle}" 
-                                      IsChecked="False" Checked="ReturnNetworkIcon" Unchecked="RemoveNetworkIcon"/>
+                            <CheckBox x:Name="NetworkIconButton" 
+                                      Style="{StaticResource ToggleButtonStyle}" 
+                                      IsChecked="False" 
+                                      Checked="ReturnNetworkIcon" 
+                                      Unchecked="RemoveNetworkIcon"/>
                         </Grid>
                     </StackPanel>
-                </Grid>
+                </Border>
             </TabItem>
-            <TabItem Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images/desktop.png">
-                <StackPanel x:Name="Desktop" Margin="460,140,32,20">
-                    <Grid x:Name="LabelArrows" Style="{StaticResource GridForTweaks}">
-                        <ContentControl x:Name="LabelArrowsBackground"
-                                        Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                        local:ToggleButtonContent.ImageSource="Images\label.png"
-                                        Content="Стрелки на ярлыках"/>
-                        <CheckBox x:Name="LabelArrowsButton" Style="{StaticResource ToggleButtonStyle}" 
-                                  IsChecked="False" Checked="ReturnLabelArrows" Unchecked="RemoveLabelArrows"/>
-                    </Grid>
-                    <Grid x:Name="WallpaperCompression" Style="{StaticResource GridForTweaks}">
-                        <ContentControl x:Name="WallpaperCompressionBackground" 
-                                        Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                        local:ToggleButtonContent.ImageSource="Images\WallpaperCompression.png"
-                                        Content="Сжатие обоев рабочего стола"/>
-                        <CheckBox x:Name="WallpaperCompressionButton" Style="{StaticResource ToggleButtonStyle}" 
-                                  IsChecked="False" Checked="ReturnWallpaperCompression" Unchecked="RemoveWallpaperCompression"/>
-                    </Grid>
-                </StackPanel>
+            <TabItem x:Name="desktopItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images\desktop.png">
+                <Border Style="{StaticResource TabContentBorderStyle}">
+                    <StackPanel Margin="460,140,32,20">
+                        <Grid Style="{StaticResource GridForTweaks}">
+                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                            local:ToggleButtonContent.ImageSource="Images\label.png"
+                                            Content="Стрелки на ярлыках"/>
+                            <CheckBox x:Name="LabelArrowsButton" 
+                                      Style="{StaticResource ToggleButtonStyle}" 
+                                      IsChecked="False" 
+                                      Checked="ReturnLabelArrows" 
+                                      Unchecked="RemoveLabelArrows"/>
+                        </Grid>
+                        <Grid Style="{StaticResource GridForTweaks}">
+                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                            local:ToggleButtonContent.ImageSource="Images\WallpaperCompression.png"
+                                            Content="Сжатие обоев рабочего стола"/>
+                            <CheckBox x:Name="WallpaperCompressionButton" 
+                                      Style="{StaticResource ToggleButtonStyle}" 
+                                      IsChecked="False" 
+                                      Checked="ReturnWallpaperCompression" 
+                                      Unchecked="RemoveWallpaperCompression"/>
+                        </Grid>
+                        <Button x:Name="highlightColorChanger" Width="100" Height="60" Click="ChangeHighlightColor"/>
+                    </StackPanel>
+                </Border>
             </TabItem>
-            <TabItem Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images/activation.png">
-                <StackPanel x:Name="ActivateSheet" Margin="30,30,665,250">
-                    <Button x:Name="ActivateWindowsButton" Style="{StaticResource ClickButton}" Content="Windows" Click="ActivateWindows"/>
-                    <!-- <Button x:Name="ActivateMicrosoft" Style="{StaticResource ClickButton}" Content="Windows"/> -->
-                    <Button x:Name="ActivateWinRarButton" Style="{StaticResource ClickButton}" Content="WinRar" Click="ActivateWinRar"/>
-                </StackPanel>
+            <TabItem x:Name="activationItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images/activation.png">
+                <Border Style="{StaticResource TabContentBorderStyle}">
+                    <StackPanel Margin="30,30,665,220">
+                        <Button x:Name="ActivateWindowsButton" Style="{StaticResource ClickButton}" Content="Windows\Office" Click="ActivateWindows" Cursor="Hand"/>
+                        <Button x:Name="ActivateWinRarButton" Style="{StaticResource ClickButton}" Content="WinRar" Click="ActivateWinRar"/>
+                    </StackPanel>
+                </Border>
+            </TabItem>
+            <TabItem x:Name="fixesItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Images/fix.png">
+                <Border Style="{StaticResource TabContentBorderStyle}">
+                    <StackPanel Margin="0 20 0 300" Width="204" HorizontalAlignment="Left">
+                        <TextBox x:Name="BusNumberInput" HorizontalAlignment="Left" Width="100"/>
+                        <Button x:Name="FixDisksButton" Style="{StaticResource ClickButton}" Content="Apply" Click="FixHardDisks" HorizontalAlignment="Right" Width="54" Height="16" Margin="0 -20 20 0"/>
+                    </StackPanel>
+                </Border>
             </TabItem>
         </TabControl>
     </Grid>
