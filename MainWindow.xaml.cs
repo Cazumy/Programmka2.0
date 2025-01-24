@@ -2,9 +2,9 @@
 using Programmka.Resources;
 using System.Diagnostics;
 using System.Net;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Programmka;
 public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
@@ -326,29 +326,27 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     private void DownloadOffice(object sender, RoutedEventArgs e)
     {
         var fileName = @"Configuration.xml";
-        var fileContent = @"<Configuration ID=""aa6c9195-b180-4d82-b808-48f4d1886c73"">
+        StringBuilder fileContent = new(@"<Configuration ID=""aa6c9195-b180-4d82-b808-48f4d1886c73"">
   <Add OfficeClientEdition=""64"" Channel=""PerpetualVL2024"">
     <Product ID=""ProPlus2024Volume"" PIDKEY=""XJ2XN-FW8RK-P4HMP-DKDBV-GCVGB"">
-      <Language ID=""ru-ru"" />";
-        var selection = new OfficeSelectionWindow();
-        if(selection.ShowDialog() == true)
+      <Language ID=""ru-ru"" />" + "\n");
+        var selectionWindow = new OfficeSelectionWindow();
+        bool? result = selectionWindow.ShowDialog();
+        if (!selectionWindow.IsConfirmed)
         {
-            MessageBox.Show("Good");
+            MessageBox.Show("Установка офиса отменена");
+            return;
         }
-        else
-        {
-            MessageBox.Show("Bad");
-        }
-        var urlOffice = @"https://officecdn.microsoft.com/pr/wsus/setup.exe";
-        using (var webClient = new WebClient())
-        {
-            webClient.DownloadFile(urlOffice, @"C:\setup.exe");
-        }
-        var reg = @"reg add ""HKCU\Software\Microsoft\Office\16.0\Common\ExperimentConfigs\Ecs"" /v ""CountryCode"" /t REG_SZ /d ""std::wstring|US"" /f";
-        Methods.RunInCMD(reg);
-
-
-        fileContent += @"    </Product>
+        if (!selectionWindow.officeSelections[0]) { fileContent.Append(@"      <ExcludeApp ID=""Access"" />" + "\n"); }
+        if (!selectionWindow.officeSelections[1]) { fileContent.Append(@"      <ExcludeApp ID=""OneDrive"" />" + "\n"); }
+        if (!selectionWindow.officeSelections[2]) { fileContent.Append(@"      <ExcludeApp ID=""Outlook"" />" + "\n"); }
+        if (!selectionWindow.officeSelections[3]) { fileContent.Append(@"      <ExcludeApp ID=""Publisher"" />" + "\n"); }
+        if (!selectionWindow.officeSelections[4]) { fileContent.Append(@"      <ExcludeApp ID=""Excel"" />" + "\n"); }
+        if (!selectionWindow.officeSelections[5]) { fileContent.Append(@"      <ExcludeApp ID=""Lync"" />" + "\n"); }
+        if (!selectionWindow.officeSelections[6]) { fileContent.Append(@"      <ExcludeApp ID=""OneNote"" />" + "\n"); }
+        if (!selectionWindow.officeSelections[7]) { fileContent.Append(@"      <ExcludeApp ID=""PowerPoint"" />" + "\n"); }
+        if (!selectionWindow.officeSelections[8]) { fileContent.Append(@"      <ExcludeApp ID=""Word"" />" + "\n"); }
+        fileContent.Append(@"    </Product>
   </Add>
   <Property Name=""SharedComputerLicensing"" Value=""0"" />
   <Property Name=""FORCEAPPSHUTDOWN"" Value=""FALSE"" />
@@ -357,10 +355,17 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
   <Property Name=""AUTOACTIVATE"" Value=""1"" />
   <Updates Enabled=""TRUE"" />
   <RemoveMSI />
-</Configuration>";
-        System.IO.File.WriteAllText(@"C:\" + fileName, fileContent);
-        var command = @"cd C:
-setup.exe /configure Configuration.xml";
+</Configuration>");
+        System.IO.File.WriteAllText(@"C:\Program Files\Microsoft Office\" + fileName, fileContent.ToString());
+        var urlOffice = @"https://officecdn.microsoft.com/pr/wsus/setup.exe";
+        using (var webClient = new WebClient())
+        {
+            webClient.DownloadFile(urlOffice, @"C:\Program Files\Microsoft Office\setup.exe");
+        }
+        var reg = @"reg add ""HKCU\Software\Microsoft\Office\16.0\Common\ExperimentConfigs\Ecs"" /v ""CountryCode"" /t REG_SZ /d ""std::wstring|US"" /f";
+        Methods.RunInCMD(reg);
+        var command = @"cd /d ""C:\Program Files\Microsoft Office"" && setup.exe /configure Configuration.xml";
+
         Methods.RunInCMD(command);
     }
     #endregion

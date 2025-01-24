@@ -7,15 +7,11 @@ namespace Programmka.Resources
     /// </summary>
     public partial class OfficeSelectionWindow : MahApps.Metro.Controls.MetroWindow
     {
-        public bool[] officeSelections = new bool[10];
+        public bool[] officeSelections = new bool[9];
+        public bool IsConfirmed { get; private set; } = false;
         public OfficeSelectionWindow()
         {
             InitializeComponent();
-        }
-
-        private void CloseWindow(object sender, RoutedEventArgs e)
-        {
-            Close();
         }
         private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -24,45 +20,51 @@ namespace Programmka.Resources
                 DragMove();
             }
         }
+        private void UpdateSelection(int index, bool isOn)
+        {
+            officeSelections[index] = isOn;
+        }
         private void AccessSelection(object sender, RoutedEventArgs e)
         {
-            officeSelections[0] = AccessToggle.IsOn ? true : false;
-        }
-        private void OneDriveGrooveSelection(object sender, RoutedEventArgs e)
-        {
-            officeSelections[1] = AccessToggle.IsOn ? true : false;
+            UpdateSelection(0, AccessToggle.IsOn);
         }
         private void OneDriveDesktopSelection(object sender, RoutedEventArgs e)
         {
-            officeSelections[2] = AccessToggle.IsOn ? true : false;
+            UpdateSelection(1, OneDriveDesktopToggle.IsOn);
         }
         private void OutlookSelection(object sender, RoutedEventArgs e)
         {
-            officeSelections[3] = AccessToggle.IsOn ? true : false;
+            UpdateSelection(2, OutlookToggle.IsOn);
         }
         private void PublisherSelection(object sender, RoutedEventArgs e)
         {
-            officeSelections[4] = AccessToggle.IsOn ? true : false;
+            UpdateSelection(3, PublisherToggle.IsOn);
         }
         private void ExcelSelection(object sender, RoutedEventArgs e)
         {
-            officeSelections[5] = AccessToggle.IsOn ? true : false;
+            UpdateSelection(4, ExcelToggle.IsOn);
         }
         private void SkypeSelection(object sender, RoutedEventArgs e)
         {
-            officeSelections[6] = AccessToggle.IsOn ? true : false;
+            UpdateSelection(5, SkypeToggle.IsOn);
         }
         private void OneNoteSelection(object sender, RoutedEventArgs e)
         {
-            officeSelections[7] = AccessToggle.IsOn ? true : false;
+            UpdateSelection(6, OneNoteToggle.IsOn);
         }
         private void PowerPointSelection(object sender, RoutedEventArgs e)
         {
-            officeSelections[8] = AccessToggle.IsOn ? true : false;
+            UpdateSelection(7, PowerPointToggle.IsOn);
         }
         private void WordSelection(object sender, RoutedEventArgs e)
         {
-            officeSelections[9] = AccessToggle.IsOn ? true : false;
+            UpdateSelection(8, WordToggle.IsOn);
+        }
+
+        private void Confirm(object sender, RoutedEventArgs e)
+        {
+            IsConfirmed = true;
+            this.Close();
         }
     }
 }
