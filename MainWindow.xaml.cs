@@ -1,19 +1,13 @@
-﻿using MahApps.Metro.Controls;
-using Microsoft.Win32;
-using System;
+﻿using Microsoft.Win32;
+using Programmka.Resources;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Management;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 
 namespace Programmka;
-public partial class MainWindow : MetroWindow
+public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
 {
     private bool _initializingLabels = true,
         _initializingDisk = true,
@@ -288,7 +282,7 @@ public partial class MainWindow : MetroWindow
         }
         if (result == System.Windows.Forms.DialogResult.Yes)
         {
-            path = ExplorerDialog.OpenFolderDialog();
+            path = Methods.OpenFolderDialog();
         }
         else
         {
@@ -305,7 +299,7 @@ ed467e6e4f126e19cccccf98c3b9f98c4660341d700d11a5c1aa52
 be9caf70ca9cee8199c54758f64acc9c27d3968d5e69ecb901b91d
 538d079f9f1fd1a81d656627d962bf547c38ebbda774df21605c33
 eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
-        File.WriteAllText(path + @"\rarreg.key.txt", key);
+        System.IO.File.WriteAllText(path + @"\rarreg.key.txt", key);
     }
     #endregion
     #region fix tweaks
@@ -320,49 +314,102 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         Methods.RunInCMD(command);
     }
     #endregion
+    #region downloads
+    private void DownloadHEVC(object sender, RoutedEventArgs e){
+        var hevcRef = @"http://tlu.dl.delivery.mp.microsoft.com/filestreamingservice/files/86f234a3-c022-48ad-a121-d789ee364721?P1=1737659645&P2=404&P3=2&P4=R%2bRHDulYTwrstLR2z0OgSN%2bMyIYAJm3dGBNVKGcM8QVwNABYBnD%2bTTvlvHqJAeQW3cikKB%2b0zzZnvKAKdTPiLQ%3d%3d";
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = hevcRef,
+            UseShellExecute = true
+        });
+    }
+    private void DownloadOffice(object sender, RoutedEventArgs e)
+    {
+        var fileName = @"Configuration.xml";
+        var fileContent = @"<Configuration ID=""aa6c9195-b180-4d82-b808-48f4d1886c73"">
+  <Add OfficeClientEdition=""64"" Channel=""PerpetualVL2024"">
+    <Product ID=""ProPlus2024Volume"" PIDKEY=""XJ2XN-FW8RK-P4HMP-DKDBV-GCVGB"">
+      <Language ID=""ru-ru"" />";
+        var selection = new OfficeSelectionWindow();
+        if(selection.ShowDialog() == true)
+        {
+            MessageBox.Show("Good");
+        }
+        else
+        {
+            MessageBox.Show("Bad");
+        }
+        var urlOffice = @"https://officecdn.microsoft.com/pr/wsus/setup.exe";
+        using (var webClient = new WebClient())
+        {
+            webClient.DownloadFile(urlOffice, @"C:\setup.exe");
+        }
+        var reg = @"reg add ""HKCU\Software\Microsoft\Office\16.0\Common\ExperimentConfigs\Ecs"" /v ""CountryCode"" /t REG_SZ /d ""std::wstring|US"" /f";
+        Methods.RunInCMD(reg);
+
+
+        fileContent += @"    </Product>
+  </Add>
+  <Property Name=""SharedComputerLicensing"" Value=""0"" />
+  <Property Name=""FORCEAPPSHUTDOWN"" Value=""FALSE"" />
+  <Property Name=""DeviceBasedLicensing"" Value=""0"" />
+  <Property Name=""SCLCacheOverride"" Value=""0"" />
+  <Property Name=""AUTOACTIVATE"" Value=""1"" />
+  <Updates Enabled=""TRUE"" />
+  <RemoveMSI />
+</Configuration>";
+        System.IO.File.WriteAllText(@"C:\" + fileName, fileContent);
+        var command = @"cd C:
+setup.exe /configure Configuration.xml";
+        Methods.RunInCMD(command);
+    }
+    #endregion
     #endregion
     #region decorations
     private static void AnimateButton(CheckBox button)
     {
-        Ellipse toggleButton = (Ellipse)button.Template.FindName("ToggleButton", button);
+        var toggleButton = (System.Windows.Shapes.Ellipse)button.Template.FindName("ToggleButton", button);
 
         if (button.IsChecked == true)
         {
-            ThicknessAnimation animation = new()
+            System.Windows.Media.Animation.ThicknessAnimation animation = new()
             {
                 From = new Thickness(-1, 0, 0, 0),
                 To = new Thickness(16, 0, 0, 0),
-                Duration = TimeSpan.FromSeconds(0.16)
+                Duration = System.TimeSpan.FromSeconds(0.16)
             };
-            toggleButton.BeginAnimation(Ellipse.MarginProperty, animation);
+            toggleButton.BeginAnimation(System.Windows.Shapes.Ellipse.MarginProperty, animation);
         }
         else
         {
-            ThicknessAnimation animation = new()
+            System.Windows.Media.Animation.ThicknessAnimation animation = new()
             {
                 From = new Thickness(16, 0, 0, 0),
                 To = new Thickness(-1, 0, 0, 0),
-                Duration = TimeSpan.FromSeconds(0.16)
+                Duration = System.TimeSpan.FromSeconds(0.16)
             };
-            toggleButton.BeginAnimation(Ellipse.MarginProperty, animation);
+            toggleButton.BeginAnimation(System.Windows.Shapes.Ellipse.MarginProperty, animation);
         }
     }
-    private void TabItem_MouseEnter(object sender, MouseEventArgs e)
+    private void TabItem_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
     {
-        if (sender is Border border && VisualTreeHelper.GetParent(border) is TabItem tabItem)
+        if (sender is Border border && System.Windows.Media.VisualTreeHelper.GetParent(border) is TabItem tabItem)
         {
+            System.Threading.Thread.Sleep(20);
             tabItemDescription.Text = tabItem.Name switch
             {
                 "fileExplorerItem" => "Кастомизация проводника",
                 "desktopItem" => "Кастомизация рабочего стола",
                 "activationItem" => "Активация",
                 "fixesItem" => "Исправление багов винды",
+                "downloads" => "Загрузка приложений и файлов",
                 _ => string.Empty,
             };
         }
     }
-    private void TabItem_MouseLeave(object sender, MouseEventArgs e)
+    private void TabItem_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
     {
+        System.Threading.Thread.Sleep(30);
         tabItemDescription.Text = string.Empty;
     }
     #endregion

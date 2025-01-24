@@ -57,5 +57,15 @@ namespace Programmka
             process.Start();
             process.WaitForExit();
         }
+        public static string OpenFolderDialog()
+        {
+            using var dialog = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
+            dialog.Description = "Выберите папку, в которую установлен WINRAR";
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                return dialog.SelectedPath;
+            }
+            return null;
+        }
     }
 }

@@ -15,7 +15,6 @@
                  TitleForeground="#FF956C98"
                  WindowTitleBrush="#FF170117">
     <mah:MetroWindow.Resources>
-
         <Style x:Key="GridForTweaks" TargetType="{x:Type Grid}">
             <Setter Property="Width" Value="300"/>
             <Setter Property="Height" Value="46"/>
@@ -248,8 +247,8 @@
             <TabItem x:Name="activationItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images/activation.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
                     <StackPanel Margin="30,30,665,220">
-                        <Button x:Name="ActivateWindowsButton" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Content="Windows\Office" Click="ActivateWindows" Cursor="Hand" Margin="0 0 0 20"/>
-                        <Button x:Name="ActivateWinRarButton" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Content="WinRar" Click="ActivateWinRar" Cursor="Hand"/>
+                        <Button x:Name="ActivateWindowsButton" Content="Windows\Office" Click="ActivateWindows" Cursor="Hand" Margin="0 0 0 20"/>
+                        <Button x:Name="ActivateWinRarButton" Content="WinRar" Click="ActivateWinRar" Cursor="Hand"/>
                     </StackPanel>
                 </Border>
             </TabItem>
@@ -263,6 +262,15 @@
                         </StackPanel>
                         <TextBlock Text="Пропали иконки, остались только имена ярлыков и папок" Margin="0 20 0 0" Foreground="White" FontSize="14"/>
                         <Button Content="Fix" Width="80" Height="40" Click="ReturnLabelArrows" Cursor="Hand"/>
+                    </StackPanel>
+                </Border>
+            </TabItem>
+            <TabItem x:Name="downloads" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images\download.png">
+                <Border Style="{StaticResource TabContentBorderStyle}" >
+                    <StackPanel Height="166" Margin="20,20,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <Button Click="DownloadHEVC" Width="80" Height="40" Content="HEVC\x265"/>
+                        <Button Click="DownloadOffice" Width="80" Height="40" Content="Office"/>
+                        
                     </StackPanel>
                 </Border>
             </TabItem>
