@@ -201,6 +201,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include=".editorconfig" />
     <None Include="app.manifest" />
     <None Include="Resources\Cursors\Pixel_Fun3\PF3C_zlk_AppStart.ani" />
     <None Include="Resources\Cursors\Pixel_Fun3\PF3C_zlk_Click.ani" />

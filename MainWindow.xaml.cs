@@ -35,7 +35,6 @@ public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
         WallpaperCompressionButton.IsChecked = CheckWallpaperCompression();
     }
     #region checks for checkboxes
-
     private static bool CheckDuplicate()
     {
         return Registry.LocalMachine.OpenSubKey(
@@ -43,73 +42,40 @@ public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
     }
     private static bool CheckLabels()
     {
-        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
-
-        using var hKey = Registry.LocalMachine.OpenSubKey(subKey);
-        var value = hKey?.GetValue("29");
-        if (value != null) return false;
-        return true;
+        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons", key = "29";
+        return !Methods.ContainsReg(subKey, key);
     }
     private static bool CheckQuickAccess()
     {
-        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
-
-        using var hKey = Registry.LocalMachine.OpenSubKey(subKey);
-        var value = hKey?.GetValue("HubMode");
-        if (value != null) return false;
-        return true;
+        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", key = "HubMode";
+        return !Methods.ContainsReg(subKey, key);
     }
     private static bool Check3DObjects()
     {
-        const string keyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
-
-        using var hKey = Registry.LocalMachine.OpenSubKey(keyPath);
-        if (hKey != null) return true;
-
-        return false;
+        return Registry.LocalMachine.OpenSubKey(
+            @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}") != null;
     }
     private static bool CheckNetworkIcon()
     {
         bool attributes = true;
-        bool isPinned = true;
-        using (var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder"))
+        using (var target = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder"))
         {
-            if (key != null)
+            if (target != null)
             {
-                var value = key.GetValue("Attributes");
-                if (value is int intValue)
+                var targetValue = target.GetValue("Attributes");
+                if (targetValue is int intValue)
                 {
-                    attributes = (uint)intValue != 0xb0940064U;
-                }
-            }
-
-        }
-        using (var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"))
-        {
-            if (key != null)
-            {
-                var value = key.GetValue("System.IsPinnedtoNameSpaceTree");
-                if (value is int intValue)
-                {
-                    isPinned = intValue != 0;
+                    attributes = (uint)intValue != 0xb0940064U; // not Methods.ContainsRegValue cause of uint
                 }
             }
         }
-        return attributes && isPinned;
+        var subkey = @"SOFTWARE\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"; var key = "System.IsPinnedtoNameSpaceTree"; var value = 0;
+        return attributes && Methods.ContainsRegValue(subkey, key, value);
     }
     private static bool CheckWallpaperCompression()
     {
-        const string subKey = @"Control Panel\Desktop";
-        using var key = Registry.CurrentUser.OpenSubKey(subKey);
-        if (key != null)
-        {
-            var value = key.GetValue("JPEGImportQuality");
-            if (value is int intValue)
-            {
-                return intValue != 256;
-            }
-        }
-        return true;
+        var subKey = @"Control Panel\Desktop"; var key = "JPEGImportQuality"; var value = 256;
+        return Methods.ContainsRegValue(subKey, key, value);   
     }
     #endregion
     #region tweaks
@@ -117,60 +83,49 @@ public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
     private void RemoveDiskDuplicate(object sender, RoutedEventArgs e)
     {
         if (_initializingDisk) return;
-        const string subKeyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
-        const string keyName = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
-        using (var key = Registry.LocalMachine.CreateSubKey(subKeyPath, true))
-        {
-            key?.DeleteSubKeyTree(keyName, false);
-        }
+        var subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
+        var dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
+        Methods.DeleteRegDir(subkey, dir);
         AnimateButton(DiskDuplicateButton);
     }
     private void ReturnDiskDuplicate(object sender, RoutedEventArgs e)
     {
         if (_initializingDisk) return;
-        const string subKeyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
-        const string keyName = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
-        const string valueData = "Removable Drives";
-        using (var key = Registry.LocalMachine.CreateSubKey(subKeyPath))
-        {
-            if (key == null) return;
-            var newKey = key.OpenSubKey(keyName, true) ?? key.CreateSubKey(keyName);
-            newKey?.SetValue("", valueData, RegistryValueKind.String);
-        }
+        var subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
+        var dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
+        var key = "Removable Drives";
+        Methods.CreateReg(subkey, key, dir);
         AnimateButton(DiskDuplicateButton);
     }
     private void RemoveQuickAccess(object sender, RoutedEventArgs e)
     {
         if (_initializingAccess) return;
-        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
-        using (var hKey = Registry.LocalMachine.CreateSubKey(subKey))
-        {
-            hKey?.SetValue("HubMode", 1, RegistryValueKind.String);
-        }
+        var subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
+        var key = "HubMode";
+        var value = "1";
+        Methods.CreateReg(subKey, key, "", value);
         AnimateButton(QuickAccessButton);
     }
     private void ReturnQuickAccess(object sender, RoutedEventArgs e)
     {
         if (_initializingAccess) return;
-        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
-        using (var hKey = Registry.LocalMachine.OpenSubKey(subKey, writable: true))
-        {
-            hKey?.DeleteValue("HubMode");
-        }
+        var subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
+        var key = "HubMode";
+        Methods.DeleteReg(subKey, key);
         AnimateButton(QuickAccessButton);
     }
     private void RemoveObjects3D(object sender, RoutedEventArgs e)
     {
         if (_initializingObjects) return;
-        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
-        Registry.LocalMachine.DeleteSubKeyTree(subKey, throwOnMissingSubKey: false);
+        var subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\"; var dir = "{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
+        Methods.DeleteRegDir(subKey, dir);
         AnimateButton(Objects3DButton);
     }
     private void ReturnObjects3D(object sender, RoutedEventArgs e)
     {
         if (_initializingObjects) return;
-        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
-        Registry.LocalMachine.CreateSubKey(subKey);
+        var subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
+        Methods.CreateRegDir(subKey);
         AnimateButton(Objects3DButton);
     }
     private void RemoveNetworkIcon(object sender, RoutedEventArgs e)
@@ -221,36 +176,29 @@ public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
     {
         if (_initializingLabels) return;
         const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
-        using (var hKey = Registry.LocalMachine.CreateSubKey(subKey))
-        {
-            hKey?.SetValue("29", "", RegistryValueKind.String);
-        }
+        var key = "29";
+        Methods.CreateReg(subKey, key);
         AnimateButton(LabelArrowsButton);
     }
     private void ReturnLabelArrows(object sender, RoutedEventArgs e)
     {
         if (_initializingLabels) return;
-        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
-        Registry.LocalMachine.DeleteSubKeyTree(subKey, throwOnMissingSubKey: false);
+        var subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\"; var dir = "Shell Icons";
+        Methods.DeleteRegDir(subKey, dir);
         AnimateButton(LabelArrowsButton);
     }
     private void RemoveWallpaperCompression(object sender, RoutedEventArgs e)
     {
         if (_initializngWallpaper) return;
-
         Methods.SetWallpaperCompressionQuality(256);
-
         AnimateButton(WallpaperCompressionButton);
     }
     private void ReturnWallpaperCompression(object sender, RoutedEventArgs e)
     {
         if (_initializngWallpaper) return;
-
         Methods.SetWallpaperCompressionQuality(128);
-
         AnimateButton(WallpaperCompressionButton);
     }
-
     private void ChangeHighlightColor(object sender, RoutedEventArgs e) { }
     #endregion
     #region activation tweaks
@@ -323,7 +271,7 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
             UseShellExecute = true
         });
     }
-    private void DownloadOffice(object sender, RoutedEventArgs e)
+    private async void DownloadOffice(object sender, RoutedEventArgs e)
     {
         var fileName = @"Configuration.xml";
         StringBuilder fileContent = new(@"<Configuration ID=""aa6c9195-b180-4d82-b808-48f4d1886c73"">
@@ -366,7 +314,7 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         Methods.RunInCMD(reg);
         var command = @"cd /d ""C:\Program Files\Microsoft Office"" && setup.exe /configure Configuration.xml";
 
-        Methods.RunInCMD(command);
+        await Methods.RunInCMD(command);
     }
     #endregion
     #endregion

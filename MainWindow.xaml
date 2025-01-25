@@ -240,7 +240,7 @@
                                       Checked="ReturnWallpaperCompression" 
                                       Unchecked="RemoveWallpaperCompression"/>
                         </Grid>
-                        <Button x:Name="highlightColorChanger" Width="100" Height="60" Click="ChangeHighlightColor"/>
+                        <Button x:Name="highlightColorChanger" Width="100" Height="60" Click="ChangeHighlightColor" Content="Поменять цвет выделения"/>
                     </StackPanel>
                 </Border>
             </TabItem>
