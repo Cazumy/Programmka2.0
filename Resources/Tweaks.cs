@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Programmka
@@ -64,6 +65,71 @@ namespace Programmka
             }
             return null;
         }
+
+        #region cleanup
+        public static readonly System.Collections.Generic.List<string> AllTempPath =
+    [
+        @"C:\Windows\Temp",
+        @"C:\Windows\SoftwareDistribution",
+        @"C:\Windows\Prefetch",
+        @"C:\Users\mr-4e\AppData\Local\Temp",
+        @"C:\$Recycle.Bin"
+    ];
+        private static long GetFolderSize(string folderPath)
+        {
+            long folderSize = 0;
+            if (!Directory.Exists(folderPath))
+            {
+                return folderSize;
+            }
+            foreach (string file in Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories))
+            {
+                try
+                {
+                    FileInfo fileInfo = new(file);
+                    folderSize += fileInfo.Length;
+                }
+                catch (UnauthorizedAccessException) { }
+            }
+            return folderSize;
+        }
+        public static long GetFullTempSize()
+        {
+            long tempSize = 0;
+            foreach (string path in AllTempPath)
+            {
+                tempSize += GetFolderSize(path);
+            }
+            return tempSize; 
+        }
+        public static string NormalizeByteSyze(long size)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            float normalSize = size;
+            var order = 0;
+            while (normalSize >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                normalSize /= 1024;
+            }
+            return $"{normalSize:0.##}" + sizes[order].ToString();
+        }
+        public static void CleanFolder(string folderPath)
+        {
+            if (!Directory.Exists(folderPath)) { return; }
+            foreach (string file in Directory.GetFiles(folderPath))
+            {
+                try { File.Delete(file); }
+                catch (Exception) { }
+            }
+
+            foreach (string directory in Directory.GetDirectories(folderPath))
+            {
+                try { Directory.Delete(directory, true); }
+                catch (Exception) { }
+            }
+        }
+        #endregion
 
         #region Register
         /// <summary>

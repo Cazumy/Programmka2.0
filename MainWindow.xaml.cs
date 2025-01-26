@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
 using Programmka.Resources;
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Windows;
@@ -19,6 +21,7 @@ public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
     {
         InitializeComponent();
         InitializeCheckBoxes();
+        tempSizeText.Text = Methods.NormalizeByteSyze(Methods.GetFullTempSize());
     }
     private void MainWindow_Loaded(object senter, RoutedEventArgs e)
     {
@@ -317,6 +320,23 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         await Methods.RunInCMD(command);
     }
     #endregion
+    #region cleanup
+    private void CleanupWinSxS(object sender, RoutedEventArgs e)
+    {
+        
+    }
+    private void CleanupTemp(object sender, RoutedEventArgs e)
+    {
+        long prevSize = Methods.GetFullTempSize();
+        foreach (string path in Methods.AllTempPath)
+        {
+            Methods.CleanFolder(path);
+        }
+        tempSizeText.Text = Methods.NormalizeByteSyze(Methods.GetFullTempSize());
+        var byteDiff = prevSize - Methods.GetFullTempSize();
+        tabItemDescription.Text = $"Успешно очищено: {Methods.NormalizeByteSyze(byteDiff)}";
+    }
+    #endregion
     #endregion
     #region decorations
     private static void AnimateButton(CheckBox button)
@@ -348,21 +368,20 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     {
         if (sender is Border border && System.Windows.Media.VisualTreeHelper.GetParent(border) is TabItem tabItem)
         {
-            System.Threading.Thread.Sleep(20);
             tabItemDescription.Text = tabItem.Name switch
             {
                 "fileExplorerItem" => "Кастомизация проводника",
                 "desktopItem" => "Кастомизация рабочего стола",
                 "activationItem" => "Активация",
-                "fixesItem" => "Исправление багов винды",
+                "fixesItem" => "Исправление багов системы",
                 "downloads" => "Загрузка приложений и файлов",
+                "cleanup" => "Очистка системы",
                 _ => string.Empty,
             };
         }
     }
     private void TabItem_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
     {
-        System.Threading.Thread.Sleep(30);
         tabItemDescription.Text = string.Empty;
     }
     #endregion

@@ -274,6 +274,15 @@
                     </StackPanel>
                 </Border>
             </TabItem>
+            <TabItem x:Name="cleanup" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images\cleanup.png">
+                <Border Style="{StaticResource TabContentBorderStyle}">
+                    <StackPanel HorizontalAlignment="Left" Margin="10" Orientation="Horizontal" VerticalAlignment="Top">
+                        <Button Content="Очистка временных файлов" Width="180px" Height="40" Click="CleanupTemp"/>
+                        <TextBlock Text="Доступно для очистки - " FontSize="16" Margin="40 0 0 0" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="tempSizeText" Text="0" Width="70" Height="20" FontSize="16" Foreground="White" FontFamily="Arial"/>
+                    </StackPanel>
+                </Border>
+            </TabItem>
         </TabControl>
     </Grid>
 </mah:MetroWindow>
