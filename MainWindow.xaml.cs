@@ -221,6 +221,7 @@ public partial class MainWindow
         if (result == System.Windows.Forms.DialogResult.Yes)
         {
             path = Methods.OpenFolderDialog();
+            if(string.IsNullOrEmpty(path)) { path = @"C:\Program Files\WinRAR"; }
         }
         else
         {
