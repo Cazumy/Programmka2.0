@@ -54,13 +54,12 @@ namespace Programmka
         }
         public static string OpenFolderDialog()
         {
-            using var dialog = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog();
-            dialog.Description = "Выберите папку, в которую установлен WINRAR";
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var dialog = new Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog
             {
-                return dialog.SelectedPath;
-            }
-            return null;
+                IsFolderPicker = true,
+                Title = "Выберите папку, в которой установлен WinRar"
+            };
+            return dialog.ShowDialog() == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok ? dialog.FileName : null;
         }
 
         #region cleanup
@@ -137,7 +136,6 @@ namespace Programmka
             using var hkey = Registry.LocalMachine.OpenSubKey(subkey);
             return hkey?.GetValue(key) != null;
         }
-
         /// <summary>
         /// For Registry.CurrentUser;   value = int
         /// </summary>

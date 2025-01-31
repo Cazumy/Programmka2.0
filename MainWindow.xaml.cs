@@ -73,7 +73,6 @@ public partial class MainWindow
     private void DiskDuplicate(object sender, RoutedEventArgs e)
     {
         if (_ignoreToggleEvents) return;
-        MessageBox.Show("123");
         if (DiskDuplicateButton.IsChecked == true)
         {
             const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
@@ -91,7 +90,6 @@ public partial class MainWindow
     private void QuickAccess(object sender, RoutedEventArgs e)
     {
         if (_ignoreToggleEvents) return;
-        MessageBox.Show("123");
         if (QuickAccessButton.IsChecked == true)
         {
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
