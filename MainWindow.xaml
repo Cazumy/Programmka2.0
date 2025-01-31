@@ -1,135 +1,109 @@
-﻿<mah:MetroWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:local="clr-namespace:Programmka"
-                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-                 x:Class="Programmka.MainWindow"
-                 mc:Ignorable="d"
-                 Loaded="MainWindow_Loaded"
-                 Title="Programmka" 
-                 ResizeMode="NoResize" 
-                 WindowStartupLocation="CenterScreen"
-                 SizeToContent="WidthAndHeight" 
-                 Background="#FF290029"
-                 TitleForeground="#FF956C98"
-                 WindowTitleBrush="#FF170117">
-    <mah:MetroWindow.Resources>
+﻿<Window
+    x:Class="Programmka.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:Programmka"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    Title="Programmka"
+    Background="#FF290029"
+    ResizeMode="NoResize"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterScreen">
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation
+                        AutoReverse="False"
+                        Storyboard.TargetProperty="(Window.Opacity)"
+                        From="0.0"
+                        To="1.0"
+                        Duration="0:0:.5" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+    <Window.Resources>
         <Style x:Key="GridForTweaks" TargetType="{x:Type Grid}">
-            <Setter Property="Width" Value="300"/>
-            <Setter Property="Height" Value="46"/>
+            <Setter Property="Width" Value="300" />
+            <Setter Property="Height" Value="46" />
         </Style>
         <Style x:Key="ToggleButtonBackgroundStyle" TargetType="{x:Type ContentControl}">
-            <Setter Property="Height" Value="36"/>
-            <Setter Property="Width" Value="300"/>
-            <Setter Property="Margin" Value="0 0 0 8"/>
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Width" Value="300" />
+            <Setter Property="Margin" Value="0,0,0,8" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ContentControl}">
-                        <Border Background="#FFFFC3BF"
-                                CornerRadius="15"
-                                BorderThickness="1.4"
-                                BorderBrush="#FF2B1C1C">
+                    <ControlTemplate TargetType="ContentControl">
+                        <Border
+                            Background="#FFFFC3BF"
+                            BorderBrush="#FF2B1C1C"
+                            BorderThickness="1.4"
+                            CornerRadius="15">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <!-- Image -->
-                                <Image Width="34"
-                                       Height="34"
-                                       Source="{Binding (local:ToggleButtonContent.ImageSource), RelativeSource={RelativeSource Mode=TemplatedParent}}" Margin="20,0,0,0"/>
-                                <!-- Text -->
-                                <TextBlock Grid.Column="1"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Left"
-                                           Text="{TemplateBinding Content}" Margin="14 0 0 0" FontFamily="MV Boli"/>
+                                <Image
+                                    Width="34"
+                                    Height="34"
+                                    Margin="20,0,0,0"
+                                    Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Margin="14,0,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    FontFamily="MV Boli"
+                                    Text="{TemplateBinding Content}" />
                             </Grid>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="ToggleButtonStyle" TargetType="{x:Type CheckBox}">
-            <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="Height" Value="22"/>
-            <Setter Property="Width" Value="40"/>
-            <Setter Property="Margin" Value="0 0 10 8"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type CheckBox}">
-                        <Grid>
-                            <Border x:Name="ToggleBorder"
-                                    Background="ForestGreen"
-                                    CornerRadius="7"
-                                    Height="14.5"
-                                    Width="35"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Left"
-                                    BorderThickness="1.5"
-                                    BorderBrush="Black"/>
-                            <Ellipse x:Name="ToggleButton"
-                                     Height="20"
-                                     Width="20"
-                                     Fill="#FF0F730F"
-                                     Stroke="Black" 
-                                     StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="ToggleButton"
-                                Property="Fill"
-                                Value="DarkRed"/>
-                                <Setter TargetName="ToggleBorder"
-                                Property="Background"
-                                Value="IndianRed"/>
-                                <Setter TargetName="ToggleButton"
-                                Property="Margin"
-                                Value="17 0 0 0"/>
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="False">
-                                <Setter TargetName="ToggleBorder"
-                                Property="Background"
-                                Value="Green"/>
-                                <Setter TargetName="ToggleButton"
-                                Property="Margin"
-                                Value="-1 0 0 0"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ToggleButton" Property="Stroke" Value="Black"/>
-                                <Setter TargetName="ToggleBorder" Property="BorderBrush" Value="Black"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+        <Style BasedOn="{StaticResource ToggleButtonSwitchBaseStyle}" TargetType="ToggleButton">
+            <Setter Property="Height" Value="24" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Margin" Value="0,0,10,8" />
+            <Setter Property="Background" Value="Red" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Cursor" Value="Hand" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
-        <Style x:Key="TabItemStyle" TargetType="{x:Type TabItem}">
+        <Style TargetType="TabItem">
             <Setter Property="Height" Value="64" />
             <Setter Property="Width" Value="56" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Border x:Name="tabItemBackground" 
-                                Background="#FF5D0049" 
-                                Margin="4 6 6 6" 
-                                CornerRadius="6" 
-                                BorderThickness="2" 
-                                BorderBrush="#FF21031A" 
-                                Cursor="Hand"
-                                MouseEnter="TabItem_MouseEnter"
-                                MouseLeave="TabItem_MouseLeave">
+                    <ControlTemplate TargetType="TabItem">
+                        <Border
+                            x:Name="tabItemBackground"
+                            Margin="4,6,6,6"
+                            Background="#FF5D0049"
+                            BorderBrush="#FF21031A"
+                            BorderThickness="2"
+                            CornerRadius="6"
+                            Cursor="Hand"
+                            MouseEnter="TabItem_MouseEnter"
+                            MouseLeave="TabItem_MouseLeave">
                             <Grid>
-                                <Image Source="{Binding (local:TabItemContent.ImageSource), RelativeSource={RelativeSource Mode=TemplatedParent}}" 
-                                       Stretch="Fill" 
-                                       HorizontalAlignment="Center" 
-                                       VerticalAlignment="Center" 
-                                       Margin="3" />
-                                <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <Image
+                                    Margin="3"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Stretch="Fill" />
+                                <ContentPresenter
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    ContentSource="Header" />
                             </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -145,144 +119,211 @@
             </Setter>
         </Style>
         <Style x:Key="TabContentBorderStyle" TargetType="{x:Type Border}">
-            <Setter Property="CornerRadius" Value="4"/>
-            <Setter Property="BorderThickness"  Value="3px" />
-            <Setter Property="BorderBrush"  Value="#1b0000"/>
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="BorderThickness" Value="3px" />
+            <Setter Property="BorderBrush" Value="#1b0000" />
             <Setter Property="Background">
                 <Setter.Value>
-                    <ImageBrush ImageSource="Resources\Images\background.jpg"/>
+                    <ImageBrush ImageSource="Resources\Images\background.jpg" />
                 </Setter.Value>
             </Setter>
         </Style>
-    </mah:MetroWindow.Resources>
-    <Grid Height="450" Width="880">
-        <Image Source="Resources\Images/win10.png" HorizontalAlignment="Right" VerticalAlignment="Top" Height="50px" Margin="8"/>
-        <TextBlock x:Name="tabItemDescription" 
-                   VerticalAlignment="Top" 
-                   HorizontalAlignment="Right" 
-                   FontSize="16" 
-                   Margin="0 22 50 0"
-                   FontFamily="MV Boli" 
-                   Foreground="White" 
-                   Width="280" 
-                   Height="30" 
-                   TextWrapping="WrapWithOverflow"/>
-        <TabControl TabStripPlacement="Top" Background="Transparent" Margin="16 0 16 8" BorderThickness="0">
-            <TabItem x:Name="fileExplorerItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images\file_explorer.png">
+    </Window.Resources>
+    <Grid Width="880" Height="450">
+        <Image
+            Height="50px"
+            Margin="8"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Source="Resources\Images/win10.png" />
+        <TextBlock
+            x:Name="tabItemDescription"
+            Width="280"
+            Height="30"
+            Margin="0,22,50,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            FontFamily="MV Boli"
+            FontSize="16"
+            Foreground="White"
+            TextWrapping="WrapWithOverflow" />
+        <TabControl
+            Margin="16,0,16,8"
+            Background="Transparent"
+            BorderThickness="0"
+            TabStripPlacement="Top">
+            <TabItem x:Name="fileExplorerItem" Tag="pack://application:,,,/Programmka;component/Resources\Images\file_explorer.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
-                    <StackPanel Margin="460,120,32,20">
+                    <StackPanel Margin="420,120,32,20">
                         <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Resources\Images\disk.png"
-                                            Content="Дубликаты дисков"/>
-                            <CheckBox x:Name="DiskDuplicateButton" 
-                                      Style="{StaticResource ToggleButtonStyle}" 
-                                      IsChecked="False" 
-                                      Checked="ReturnDiskDuplicate"
-                                      Unchecked="RemoveDiskDuplicate"/>
+                            <ContentControl
+                                Content="Дубликаты дисков"
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                Tag="pack://application:,,,/Programmka;component/Resources\Images\disk.png" />
+                            <ToggleButton x:Name="DiskDuplicateButton" Checked="DiskDuplicate" Unchecked="DiskDuplicate"/>
                         </Grid>
                         <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Resources\Images\quick_access.png"
-                                            Content="Пункт &quot;Быстрый доступ&quot;"/>
-                            <CheckBox x:Name="QuickAccessButton" 
-                                      Style="{StaticResource ToggleButtonStyle}" 
-                                      IsChecked="False" 
-                                      Checked="ReturnQuickAccess" 
-                                      Unchecked="RemoveQuickAccess"/>
+                            <ContentControl
+                                Content="Пункт &quot;Быстрый доступ&quot;"
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                Tag="pack://application:,,,/Programmka;component/Resources\Images\quick_access.png" />
+                            <ToggleButton x:Name="QuickAccessButton" Checked="QuickAccess" Unchecked="QuickAccess"/>
                         </Grid>
                         <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Resources\Images\3d_objects.png"
-                                            Content="Папка &quot;Объёмные объекты&quot;"/>
-                            <CheckBox x:Name="Objects3DButton" 
-                                      Style="{StaticResource ToggleButtonStyle}" 
-                                      IsChecked="False" 
-                                      Checked="ReturnObjects3D" 
-                                      Unchecked="RemoveObjects3D"/>
+                            <ContentControl
+                                Content="Папка &quot;Объёмные объекты&quot;"
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                Tag="pack://application:,,,/Programmka;component/Resources/Images/3d_objects.png" />
+                            <ToggleButton x:Name="Objects3DButton" Checked="Objects3D" Unchecked="Objects3D"/>
                         </Grid>
                         <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Resources\Images\network.png"
-                                            Content="Значок &quot;Сеть&quot;"/>
-                            <CheckBox x:Name="NetworkIconButton" 
-                                      Style="{StaticResource ToggleButtonStyle}" 
-                                      IsChecked="False" 
-                                      Checked="ReturnNetworkIcon" 
-                                      Unchecked="RemoveNetworkIcon"/>
+                            <ContentControl
+                                Content="Значок &quot;Сеть&quot;"
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                Tag="pack://application:,,,/Programmka;component/Resources\Images\network.png" />
+                            <ToggleButton x:Name="NetworkIconButton" Checked="NetworkIcon" Unchecked="NetworkIcon"/>
                         </Grid>
                         <Grid Style="{StaticResource GridForTweaks}">
-                            <Button Click="ReloadExplorer" Content="Перезагрузить проводник"/>
+                            <Button Click="ReloadExplorer" Content="Перезагрузить проводник" />
                         </Grid>
                     </StackPanel>
                 </Border>
             </TabItem>
-            <TabItem x:Name="desktopItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images\desktop.png">
+            <TabItem x:Name="desktopItem" Tag="pack://application:,,,/Programmka;component/Resources\Images\desktop.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
                     <StackPanel Margin="460,140,32,20">
                         <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Resources\Images\label.png"
-                                            Content="Стрелки на ярлыках"/>
-                            <CheckBox x:Name="LabelArrowsButton" 
-                                      Style="{StaticResource ToggleButtonStyle}" 
-                                      IsChecked="False" 
-                                      Checked="ReturnLabelArrows" 
-                                      Unchecked="RemoveLabelArrows"/>
+                            <ContentControl
+                                Content="Стрелки на ярлыках"
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                Tag="pack://application:,,,/Programmka;component/Resources\Images\label.png" />
+                            <ToggleButton x:Name="LabelArrowsButton" Checked="LabelArrows" Unchecked="LabelArrows"/>
                         </Grid>
                         <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                            local:ToggleButtonContent.ImageSource="Resources\Images\WallpaperCompression.png"
-                                            Content="Сжатие обоев рабочего стола"/>
-                            <CheckBox x:Name="WallpaperCompressionButton" 
-                                      Style="{StaticResource ToggleButtonStyle}" 
-                                      IsChecked="False" 
-                                      Checked="ReturnWallpaperCompression" 
-                                      Unchecked="RemoveWallpaperCompression"/>
+                            <ContentControl
+                                Content="Сжатие обоев рабочего стола"
+                                Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                Tag="pack://application:,,,/Programmka;component/Resources\Images\WallpaperCompression.png" />
+                            <ToggleButton x:Name="WallpaperCompressionButton" Checked="WallpaperCompression" Unchecked="WallpaperCompression"/>
                         </Grid>
-                        <Button x:Name="highlightColorChanger" Width="100" Height="60" Click="ChangeHighlightColor" Content="Поменять цвет выделения"/>
+                        <Button
+                            x:Name="highlightColorChanger"
+                            Width="100"
+                            Height="60"
+                            Click="ChangeHighlightColor"
+                            Content="Поменять цвет выделения" />
                     </StackPanel>
                 </Border>
             </TabItem>
-            <TabItem x:Name="activationItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images/activation.png">
+            <TabItem x:Name="activationItem" Tag="pack://application:,,,/Programmka;component/Resources\Images/activation.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
                     <StackPanel Margin="30,30,665,220">
-                        <Button x:Name="ActivateWindowsButton" Content="Windows\Office" Click="ActivateWindows" Cursor="Hand" Margin="0 0 0 20"/>
-                        <Button x:Name="ActivateWinRarButton" Content="WinRar" Click="ActivateWinRar" Cursor="Hand"/>
+                        <Button
+                            x:Name="ActivateWindowsButton"
+                            Margin="0,0,0,20"
+                            Click="ActivateWindows"
+                            Content="Windows\Office"
+                            Cursor="Hand" />
+                        <Button
+                            x:Name="ActivateWinRarButton"
+                            Click="ActivateWinRar"
+                            Content="WinRar"
+                            Cursor="Hand" />
                     </StackPanel>
                 </Border>
             </TabItem>
-            <TabItem x:Name="fixesItem" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images/fix.png">
+            <TabItem x:Name="fixesItem" Tag="pack://application:,,,/Programmka;component/Resources\Images/fix.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
-                    <StackPanel Height="166" Margin="20,20,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
-                        <TextBlock Text="Внутренние диски SATA отображаются как съемные носители" Foreground="White" FontSize="14"/>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Button Content="Fix" Click="FixHardDisks" Width="76" Height="44"  VerticalAlignment="Top" Margin="0 0 30 0" Cursor="Hand"/>
-                            <Button Content="Undo fix" Click="RemoveFixHardDisks" Width="76" Height="44" VerticalAlignment="Top" Cursor="Hand"/>
+                    <StackPanel
+                        Height="166"
+                        Margin="20,20,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top">
+                        <TextBlock
+                            FontSize="14"
+                            Foreground="White"
+                            Text="Внутренние диски SATA отображаются как съемные носители" />
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                            <Button
+                                Width="76"
+                                Height="44"
+                                Margin="0,0,30,0"
+                                VerticalAlignment="Top"
+                                Click="FixHardDisks"
+                                Content="Fix"
+                                Cursor="Hand" />
+                            <Button
+                                Width="76"
+                                Height="44"
+                                VerticalAlignment="Top"
+                                Click="RemoveFixHardDisks"
+                                Content="Undo fix"
+                                Cursor="Hand" />
                         </StackPanel>
-                        <TextBlock Text="Пропали иконки, остались только имена ярлыков и папок" Margin="0 20 0 0" Foreground="White" FontSize="14"/>
-                        <Button Content="Fix" Width="80" Height="40" Click="ReturnLabelArrows" Cursor="Hand"/>
+                        <TextBlock
+                            Margin="0,20,0,0"
+                            FontSize="14"
+                            Foreground="White"
+                            Text="Пропали иконки, остались только имена ярлыков и папок" />
+                        <Button
+                            Width="80"
+                            Height="40"
+                            Click="ReturnLabelArrows"
+                            Content="Fix"
+                            Cursor="Hand" />
                     </StackPanel>
                 </Border>
             </TabItem>
-            <TabItem x:Name="downloads" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images\download.png">
-                <Border Style="{StaticResource TabContentBorderStyle}" >
-                    <StackPanel Height="166" Margin="20,20,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
-                        <Button Click="DownloadHEVC" Width="80" Height="40" Content="HEVC\x265"/>
-                        <Button Click="DownloadOffice" Width="80" Height="40" Content="Office"/>
-                        
-                    </StackPanel>
-                </Border>
-            </TabItem>
-            <TabItem x:Name="cleanup" Style="{StaticResource TabItemStyle}" local:TabItemContent.ImageSource="Resources\Images\cleanup.png">
+            <TabItem x:Name="downloads" Tag="pack://application:,,,/Programmka;component/Resources\Images\download.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
-                    <StackPanel HorizontalAlignment="Left" Margin="10" Orientation="Horizontal" VerticalAlignment="Top">
-                        <Button Content="Очистка временных файлов" Width="180px" Height="40" Click="CleanupTemp"/>
-                        <TextBlock Text="Доступно для очистки - " FontSize="16" Margin="40 0 0 0" Foreground="White" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="tempSizeText" Text="0" Width="70" Height="20" FontSize="16" Foreground="White" FontFamily="Arial"/>
+                    <StackPanel
+                        Height="166"
+                        Margin="20,20,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top">
+                        <Button
+                            Width="80"
+                            Height="40"
+                            Click="DownloadHEVC"
+                            Content="HEVC\x265" />
+                        <Button
+                            Width="80"
+                            Height="40"
+                            Click="DownloadOffice"
+                            Content="Office" />
+
+                    </StackPanel>
+                </Border>
+            </TabItem>
+            <TabItem x:Name="cleanup" Tag="pack://application:,,,/Programmka;component/Resources\Images\cleanup.png">
+                <Border Style="{StaticResource TabContentBorderStyle}">
+                    <StackPanel
+                        Margin="10"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+                        <Button
+                            Width="180px"
+                            Height="40"
+                            Click="CleanupTemp"
+                            Content="Очистка временных файлов" />
+                        <TextBlock
+                            Margin="40,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="White"
+                            Text="Доступно для очистки - " />
+                        <TextBlock
+                            x:Name="tempSizeText"
+                            Width="70"
+                            Height="20"
+                            FontFamily="Arial"
+                            FontSize="16"
+                            Foreground="White"
+                            Text="0" />
                     </StackPanel>
                 </Border>
             </TabItem>
         </TabControl>
     </Grid>
-</mah:MetroWindow>
+</Window>

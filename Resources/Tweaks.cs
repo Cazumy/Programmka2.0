@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Programmka
 {
-    public class Methods
+    public static class Methods
     {
         public static void RunInCMD(string[] commands)
         {
@@ -46,10 +46,7 @@ namespace Programmka
             var processCompletion = new TaskCompletionSource<bool>();
 
             process.EnableRaisingEvents = true;
-            process.Exited += (sender, args) =>
-            {
-                processCompletion.TrySetResult(true);
-            };
+            process.Exited += (sender, args) => processCompletion.TrySetResult(true);
 
             process.Start();
 
@@ -100,11 +97,11 @@ namespace Programmka
             {
                 tempSize += GetFolderSize(path);
             }
-            return tempSize; 
+            return tempSize;
         }
         public static string NormalizeByteSyze(long size)
         {
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            string[] sizes = ["B", "KB", "MB", "GB", "TB"];
             float normalSize = size;
             var order = 0;
             while (normalSize >= 1024 && order < sizes.Length - 1)
@@ -112,7 +109,7 @@ namespace Programmka
                 order++;
                 normalSize /= 1024;
             }
-            return $"{normalSize:0.##}" + sizes[order].ToString();
+            return $"{normalSize:0.##}" + sizes[order];
         }
         public static void CleanFolder(string folderPath)
         {
@@ -140,7 +137,7 @@ namespace Programmka
             using var hkey = Registry.LocalMachine.OpenSubKey(subkey);
             return hkey?.GetValue(key) != null;
         }
-        
+
         /// <summary>
         /// For Registry.CurrentUser;   value = int
         /// </summary>

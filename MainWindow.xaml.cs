@@ -1,34 +1,21 @@
 ﻿using Microsoft.Win32;
-using Programmka.Resources;
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace Programmka;
-public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
+public partial class MainWindow
 {
-    private bool _initializingLabels = true,
-        _initializingDisk = true,
-        _initializingAccess = true,
-        _initializingObjects = true,
-        _initializingNetwork = true,
-        _initializngWallpaper = true;
+    private readonly bool _ignoreToggleEvents = true;
     public MainWindow()
     {
         InitializeComponent();
-        InitializeCheckBoxes();
+        InitializeToggleButtons();
+        _ignoreToggleEvents = false;
         tempSizeText.Text = Methods.NormalizeByteSyze(Methods.GetFullTempSize());
     }
-    private void MainWindow_Loaded(object senter, RoutedEventArgs e)
-    {
-        _initializingLabels = _initializingDisk =
-            _initializingAccess = _initializingObjects = _initializingNetwork = _initializngWallpaper = false;
-    }
-    public void InitializeCheckBoxes()
+
+    private void InitializeToggleButtons()
     {
         DiskDuplicateButton.IsChecked = CheckDuplicate();
         LabelArrowsButton.IsChecked = CheckLabels();
@@ -37,26 +24,21 @@ public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
         NetworkIconButton.IsChecked = CheckNetworkIcon();
         WallpaperCompressionButton.IsChecked = CheckWallpaperCompression();
     }
-    #region checks for checkboxes
+    #region checks for ToggleButtons
     private static bool CheckDuplicate()
     {
         return Registry.LocalMachine.OpenSubKey(
-                   @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders\{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}") != null;
-    }
-    private static bool CheckLabels()
-    {
-        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons", key = "29";
-        return !Methods.ContainsReg(subKey, key);
+                   @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders\{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}") == null;
     }
     private static bool CheckQuickAccess()
     {
         const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", key = "HubMode";
-        return !Methods.ContainsReg(subKey, key);
+        return Methods.ContainsReg(subKey, key);
     }
     private static bool Check3DObjects()
     {
         return Registry.LocalMachine.OpenSubKey(
-            @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}") != null;
+            @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}") == null;
     }
     private static bool CheckNetworkIcon()
     {
@@ -72,71 +54,79 @@ public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
                 }
             }
         }
-        var subkey = @"SOFTWARE\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"; var key = "System.IsPinnedtoNameSpaceTree"; var value = 0;
-        return attributes && Methods.ContainsRegValue(subkey, key, value);
+        const string subkey = @"SOFTWARE\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"; const string key = "System.IsPinnedtoNameSpaceTree"; const int value = 0;
+        return !(attributes && Methods.ContainsRegValue(subkey, key, value));
+    }
+    private static bool CheckLabels()
+    {
+        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons", key = "29";
+        return Methods.ContainsReg(subKey, key);
     }
     private static bool CheckWallpaperCompression()
     {
-        var subKey = @"Control Panel\Desktop"; var key = "JPEGImportQuality"; var value = 256;
-        return Methods.ContainsRegValue(subKey, key, value);   
+        const string subKey = @"Control Panel\Desktop"; const string key = "JPEGImportQuality"; const int value = 256;
+        return !Methods.ContainsRegValue(subKey, key, value);
     }
     #endregion
     #region tweaks
     #region explorer tweaks
-    private void RemoveDiskDuplicate(object sender, RoutedEventArgs e)
+    private void DiskDuplicate(object sender, RoutedEventArgs e)
     {
-        if (_initializingDisk) return;
-        var subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
-        var dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
-        Methods.DeleteRegDir(subkey, dir);
-        AnimateButton(DiskDuplicateButton);
-    }
-    private void ReturnDiskDuplicate(object sender, RoutedEventArgs e)
-    {
-        if (_initializingDisk) return;
-        var subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
-        var dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
-        var key = "Removable Drives";
-        Methods.CreateReg(subkey, key, dir);
-        AnimateButton(DiskDuplicateButton);
-    }
-    private void RemoveQuickAccess(object sender, RoutedEventArgs e)
-    {
-        if (_initializingAccess) return;
-        var subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
-        var key = "HubMode";
-        var value = "1";
-        Methods.CreateReg(subKey, key, "", value);
-        AnimateButton(QuickAccessButton);
-    }
-    private void ReturnQuickAccess(object sender, RoutedEventArgs e)
-    {
-        if (_initializingAccess) return;
-        var subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
-        var key = "HubMode";
-        Methods.DeleteReg(subKey, key);
-        AnimateButton(QuickAccessButton);
-    }
-    private void RemoveObjects3D(object sender, RoutedEventArgs e)
-    {
-        if (_initializingObjects) return;
-        var subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\"; var dir = "{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
-        Methods.DeleteRegDir(subKey, dir);
-        AnimateButton(Objects3DButton);
-    }
-    private void ReturnObjects3D(object sender, RoutedEventArgs e)
-    {
-        if (_initializingObjects) return;
-        var subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
-        Methods.CreateRegDir(subKey);
-        AnimateButton(Objects3DButton);
-    }
-    private void RemoveNetworkIcon(object sender, RoutedEventArgs e)
-    {
-        if (_initializingNetwork) return;
-        AnimateButton(NetworkIconButton);
-        var commands = new[]
+        if (_ignoreToggleEvents) return;
+        MessageBox.Show("123");
+        if (DiskDuplicateButton.IsChecked == true)
         {
+            const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
+            const string dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
+            Methods.DeleteRegDir(subkey, dir);
+        }
+        else
+        {
+            const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
+            const string dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
+            const string key = "Removable Drives";
+            Methods.CreateReg(subkey, key, dir);
+        }
+    }
+    private void QuickAccess(object sender, RoutedEventArgs e)
+    {
+        if (_ignoreToggleEvents) return;
+        MessageBox.Show("123");
+        if (QuickAccessButton.IsChecked == true)
+        {
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
+            const string key = "HubMode";
+            const string value = "1";
+            Methods.CreateReg(subKey, key, "", value);
+        }
+        else
+        {
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
+            const string key = "HubMode";
+            Methods.DeleteReg(subKey, key);
+        }
+    }
+    private void Objects3D(object sender, RoutedEventArgs e)
+    {
+        if (_ignoreToggleEvents) return;
+        if (Objects3DButton.IsChecked == true)
+        {
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\"; const string dir = "{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
+            Methods.DeleteRegDir(subKey, dir);
+        }
+        else
+        {
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
+            Methods.CreateRegDir(subKey);
+        }
+    }
+    private void NetworkIcon(object sender, RoutedEventArgs e)
+    {
+        if (_ignoreToggleEvents) return;
+        if (NetworkIconButton.IsChecked == true)
+        {
+            var commands = new[]
+            {
             "reg add \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0940064\" /f >nul 2>&1",
             "reg add \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /t REG_DWORD /d \"0\" /f >nul 2>&1",
             "reg add \"HKCU\\Software\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0940064\" /f >nul",
@@ -145,15 +135,13 @@ public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
             "TI.exe cmd.exe /c reg delete \"HKLM\\SOFTWARE\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /f >nul 2>&1",
             "TI.exe cmd.exe /c reg add \"HKLM\\SOFTWARE\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0040064\" /f >nul 2>&1",
             "TI.exe cmd.exe /c reg delete \"HKLM\\SOFTWARE\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /f >nul 2>&1",
-        };
-        Methods.RunInCMD(commands);
-    }
-    private void ReturnNetworkIcon(object sender, RoutedEventArgs e)
-    {
-        if (_initializingNetwork) return;
-        AnimateButton(NetworkIconButton);
-        var commands = new[]
+            };
+            Methods.RunInCMD(commands);
+        }
+        else
         {
+            var commands = new[]
+            {
             "reg add \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0040064\" /f >nul 2>&1",
             "reg delete \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /f >nul 2>&1",
             "reg add \"HKCU\\Software\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0040064\" /f >nul",
@@ -162,8 +150,9 @@ public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
             "TI.exe cmd.exe /c reg delete \"HKLM\\SOFTWARE\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /f >nul 2>&1",
             "TI.exe cmd.exe /c reg add \"HKLM\\SOFTWARE\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0940064\" /f >nul 2>&1",
             "TI.exe cmd.exe /c reg delete \"HKLM\\SOFTWARE\\Classes\\WOW6432Node\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\" /v \"System.IsPinnedtoNameSpaceTree\" /f >nul 2>&1",
-        };
-        Methods.RunInCMD(commands);
+            };
+            Methods.RunInCMD(commands);
+        }
     }
     private void ReloadExplorer(object sender, RoutedEventArgs e)
     {
@@ -175,32 +164,32 @@ public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
     }
     #endregion
     #region desktop tweaks
-    private void RemoveLabelArrows(object sender, RoutedEventArgs e)
+    private void LabelArrows(object sender, RoutedEventArgs e)
     {
-        if (_initializingLabels) return;
-        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
-        var key = "29";
-        Methods.CreateReg(subKey, key);
-        AnimateButton(LabelArrowsButton);
+        if (_ignoreToggleEvents) return;
+        if (LabelArrowsButton.IsChecked == true)
+        {
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
+            const string key = "29";
+            Methods.CreateReg(subKey, key);
+        }
+        else
+        {
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\"; const string dir = "Shell Icons";
+            Methods.DeleteRegDir(subKey, dir);
+        }
     }
-    private void ReturnLabelArrows(object sender, RoutedEventArgs e)
+    private void WallpaperCompression(object sender, RoutedEventArgs e)
     {
-        if (_initializingLabels) return;
-        var subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\"; var dir = "Shell Icons";
-        Methods.DeleteRegDir(subKey, dir);
-        AnimateButton(LabelArrowsButton);
-    }
-    private void RemoveWallpaperCompression(object sender, RoutedEventArgs e)
-    {
-        if (_initializngWallpaper) return;
-        Methods.SetWallpaperCompressionQuality(256);
-        AnimateButton(WallpaperCompressionButton);
-    }
-    private void ReturnWallpaperCompression(object sender, RoutedEventArgs e)
-    {
-        if (_initializngWallpaper) return;
-        Methods.SetWallpaperCompressionQuality(128);
-        AnimateButton(WallpaperCompressionButton);
+        if (_ignoreToggleEvents) return;
+        if (WallpaperCompressionButton.IsChecked == true)
+        {
+            Methods.SetWallpaperCompressionQuality(256);
+        }
+        else
+        {
+            Methods.SetWallpaperCompressionQuality(128);
+        }
     }
     private void ChangeHighlightColor(object sender, RoutedEventArgs e) { }
     #endregion
@@ -239,7 +228,7 @@ public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
         {
             path = @"C:\Program Files\WinRAR";
         }
-        var key = @"RAR registration data
+        const string key = @"RAR registration data
 PROMSTROI GROUP
 15 PC usage license
 UID = 42079a849eb3990521f3
@@ -256,18 +245,23 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     #region fix tweaks
     private void FixHardDisks(object sender, RoutedEventArgs e)
     {
-        string command = "reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\storahci\\Parameters\\Device\" /f /v TreatAsInternalPort /t REG_MULTI_SZ /d \"0\\0 1\\0 2\\0 3\\0 4\\0 5\\0 6\\0 7\\0 8\\0 9\\0 10\\0 11\\0 12\\0 13\\0 14\\0 15\\0 16";
+        const string command = "reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\storahci\\Parameters\\Device\" /f /v TreatAsInternalPort /t REG_MULTI_SZ /d \"0\\0 1\\0 2\\0 3\\0 4\\0 5\\0 6\\0 7\\0 8\\0 9\\0 10\\0 11\\0 12\\0 13\\0 14\\0 15\\0 16";
         Methods.RunInCMD(command);
     }
     private void RemoveFixHardDisks(object sender, RoutedEventArgs e)
     {
-        string command = "reg delete \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\storahci\\Parameters\\Device\" /v TreatAsInternalPort /f\r\n";
+        const string command = "reg delete \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\storahci\\Parameters\\Device\" /v TreatAsInternalPort /f\r\n";
         Methods.RunInCMD(command);
+    }
+    private void ReturnLabelArrows(object sender, RoutedEventArgs e)
+    {
+        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\"; const string dir = "Shell Icons";
+        Methods.DeleteRegDir(subKey, dir);
     }
     #endregion
     #region downloads
     private void DownloadHEVC(object sender, RoutedEventArgs e){
-        var hevcRef = @"http://tlu.dl.delivery.mp.microsoft.com/filestreamingservice/files/86f234a3-c022-48ad-a121-d789ee364721?P1=1737659645&P2=404&P3=2&P4=R%2bRHDulYTwrstLR2z0OgSN%2bMyIYAJm3dGBNVKGcM8QVwNABYBnD%2bTTvlvHqJAeQW3cikKB%2b0zzZnvKAKdTPiLQ%3d%3d";
+        const string hevcRef = "http://tlu.dl.delivery.mp.microsoft.com/filestreamingservice/files/86f234a3-c022-48ad-a121-d789ee364721?P1=1737659645&P2=404&P3=2&P4=R%2bRHDulYTwrstLR2z0OgSN%2bMyIYAJm3dGBNVKGcM8QVwNABYBnD%2bTTvlvHqJAeQW3cikKB%2b0zzZnvKAKdTPiLQ%3d%3d";
         Process.Start(new ProcessStartInfo
         {
             FileName = hevcRef,
@@ -276,12 +270,14 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     }
     private async void DownloadOffice(object sender, RoutedEventArgs e)
     {
-        var fileName = @"Configuration.xml";
-        StringBuilder fileContent = new(@"<Configuration ID=""aa6c9195-b180-4d82-b808-48f4d1886c73"">
-  <Add OfficeClientEdition=""64"" Channel=""PerpetualVL2024"">
-    <Product ID=""ProPlus2024Volume"" PIDKEY=""XJ2XN-FW8RK-P4HMP-DKDBV-GCVGB"">
-      <Language ID=""ru-ru"" />" + "\n");
-        var selectionWindow = new OfficeSelectionWindow();
+        const string fileName = "Configuration.xml";
+        System.Text.StringBuilder fileContent = new("""
+<Configuration ID="aa6c9195-b180-4d82-b808-48f4d1886c73">
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2024">
+    <Product ID="ProPlus2024Volume" PIDKEY="XJ2XN-FW8RK-P4HMP-DKDBV-GCVGB">
+      <Language ID="ru-ru" />
+""" + "\n");
+        var selectionWindow = new Resources.OfficeSelectionWindow();
         bool? result = selectionWindow.ShowDialog();
         if (!selectionWindow.IsConfirmed)
         {
@@ -297,34 +293,34 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         if (!selectionWindow.officeSelections[6]) { fileContent.Append(@"      <ExcludeApp ID=""OneNote"" />" + "\n"); }
         if (!selectionWindow.officeSelections[7]) { fileContent.Append(@"      <ExcludeApp ID=""PowerPoint"" />" + "\n"); }
         if (!selectionWindow.officeSelections[8]) { fileContent.Append(@"      <ExcludeApp ID=""Word"" />" + "\n"); }
-        fileContent.Append(@"    </Product>
+        fileContent.Append("""
+    </Product>
   </Add>
-  <Property Name=""SharedComputerLicensing"" Value=""0"" />
-  <Property Name=""FORCEAPPSHUTDOWN"" Value=""FALSE"" />
-  <Property Name=""DeviceBasedLicensing"" Value=""0"" />
-  <Property Name=""SCLCacheOverride"" Value=""0"" />
-  <Property Name=""AUTOACTIVATE"" Value=""1"" />
-  <Updates Enabled=""TRUE"" />
+  <Property Name="SharedComputerLicensing" Value="0" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="FALSE" />
+  <Property Name="DeviceBasedLicensing" Value="0" />
+  <Property Name="SCLCacheOverride" Value="0" />
+  <Property Name="AUTOACTIVATE" Value="1" />
+  <Updates Enabled="TRUE" />
   <RemoveMSI />
-</Configuration>");
+</Configuration>
+""");
         System.IO.File.WriteAllText(@"C:\Program Files\Microsoft Office\" + fileName, fileContent.ToString());
-        var urlOffice = @"https://officecdn.microsoft.com/pr/wsus/setup.exe";
-        using (var webClient = new WebClient())
+        const string urlOffice = "https://officecdn.microsoft.com/pr/wsus/setup.exe";
+        using (var webClient = new System.Net.WebClient())
         {
             webClient.DownloadFile(urlOffice, @"C:\Program Files\Microsoft Office\setup.exe");
         }
-        var reg = @"reg add ""HKCU\Software\Microsoft\Office\16.0\Common\ExperimentConfigs\Ecs"" /v ""CountryCode"" /t REG_SZ /d ""std::wstring|US"" /f";
+        const string reg = @"reg add ""HKCU\Software\Microsoft\Office\16.0\Common\ExperimentConfigs\Ecs"" /v ""CountryCode"" /t REG_SZ /d ""std::wstring|US"" /f";
         Methods.RunInCMD(reg);
-        var command = @"cd /d ""C:\Program Files\Microsoft Office"" && setup.exe /configure Configuration.xml";
+        const string command = @"cd /d ""C:\Program Files\Microsoft Office"" && setup.exe /configure Configuration.xml";
 
         await Methods.RunInCMD(command);
     }
     #endregion
     #region cleanup
     private void CleanupWinSxS(object sender, RoutedEventArgs e)
-    {
-        
-    }
+    {     }
     private void CleanupTemp(object sender, RoutedEventArgs e)
     {
         long prevSize = Methods.GetFullTempSize();
@@ -339,31 +335,6 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     #endregion
     #endregion
     #region decorations
-    private static void AnimateButton(CheckBox button)
-    {
-        var toggleButton = (System.Windows.Shapes.Ellipse)button.Template.FindName("ToggleButton", button);
-
-        if (button.IsChecked == true)
-        {
-            System.Windows.Media.Animation.ThicknessAnimation animation = new()
-            {
-                From = new Thickness(-1, 0, 0, 0),
-                To = new Thickness(16, 0, 0, 0),
-                Duration = System.TimeSpan.FromSeconds(0.16)
-            };
-            toggleButton.BeginAnimation(System.Windows.Shapes.Ellipse.MarginProperty, animation);
-        }
-        else
-        {
-            System.Windows.Media.Animation.ThicknessAnimation animation = new()
-            {
-                From = new Thickness(16, 0, 0, 0),
-                To = new Thickness(-1, 0, 0, 0),
-                Duration = System.TimeSpan.FromSeconds(0.16)
-            };
-            toggleButton.BeginAnimation(System.Windows.Shapes.Ellipse.MarginProperty, animation);
-        }
-    }
     private void TabItem_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
     {
         if (sender is Border border && System.Windows.Media.VisualTreeHelper.GetParent(border) is TabItem tabItem)

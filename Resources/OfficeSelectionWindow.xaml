@@ -1,84 +1,89 @@
-﻿<mah:MetroWindow x:Class="Programmka.Resources.OfficeSelectionWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:local="clr-namespace:Programmka.Resources"
-        mc:Ignorable="d"
-        Title="Выберите продукты Office" 
-        Height="250" Width="480" 
-        ResizeMode="NoResize" 
-        ShowInTaskbar="False" 
-        WindowStyle="None"
-        WindowStartupLocation="CenterScreen"
-        Background="Transparent"
-        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+﻿<mah:MetroWindow
+    x:Class="Programmka.Resources.OfficeSelectionWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    Title="Выберите продукты Office"
+    Width="480"
+    Height="250"
+    Background="Transparent"
+    MouseLeftButtonDown="Window_MouseLeftButtonDown"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None">
     <Window.Resources>
         <Style TargetType="mah:ToggleSwitch">
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Background" Value="Gray" />
-            <Setter Property="IsOn" Value="True"/>
-            <Setter Property="OnContent" Value="Вкл."/>
-            <Setter Property="OffContent" Value="Выкл."/>
-            <Setter Property="Margin" Value="5 0 0 0"/>
+            <Setter Property="IsOn" Value="True" />
+            <Setter Property="OnContent" Value="Вкл." />
+            <Setter Property="OffContent" Value="Выкл." />
+            <Setter Property="Margin" Value="5,0,0,0" />
         </Style>
         <Style TargetType="TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="14" />
         </Style>
     </Window.Resources>
     <Grid Background="Transparent">
-        <Border Background="#FF777777" BorderThickness="2" BorderBrush="Black" CornerRadius="10"/>
-        <StackPanel Margin="15 15 0 0">
+        <Border
+            Background="#FF777777"
+            BorderBrush="Black"
+            BorderThickness="2"
+            CornerRadius="10" />
+        <StackPanel Margin="15,15,0,0">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Access  " Margin="0 0 65 0" />
-                <mah:ToggleSwitch x:Name="AccessToggle"
-                          Toggled="AccessSelection"/>
+                <TextBlock Margin="0,0,65,0" Text="Access  " />
+                <mah:ToggleSwitch x:Name="AccessToggle" Toggled="AccessSelection" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Skype for Business"/>
-                <mah:ToggleSwitch x:Name="SkypeToggle"
-                      Toggled="SkypeSelection"/>
+                <TextBlock Text="Skype for Business" />
+                <mah:ToggleSwitch x:Name="SkypeToggle" Toggled="SkypeSelection" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="OneNote " Margin="0 0 54 0"/>
-                <mah:ToggleSwitch x:Name="OneNoteToggle"
-                      Toggled="OneNoteSelection"/>
+                <TextBlock Margin="0,0,54,0" Text="OneNote " />
+                <mah:ToggleSwitch x:Name="OneNoteToggle" Toggled="OneNoteSelection" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="PowerPoint " Margin="0 0 41 0"/>
-                <mah:ToggleSwitch x:Name="PowerPointToggle"
-                      Toggled="PowerPointSelection"/>
+                <TextBlock Margin="0,0,41,0" Text="PowerPoint " />
+                <mah:ToggleSwitch x:Name="PowerPointToggle" Toggled="PowerPointSelection" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Word   " Margin="0 0 68 0"/>
-                <mah:ToggleSwitch x:Name="WordToggle"
-                      Toggled="WordSelection"/>
+                <TextBlock Margin="0,0,68,0" Text="Word   " />
+                <mah:ToggleSwitch x:Name="WordToggle" Toggled="WordSelection" />
             </StackPanel>
         </StackPanel>
-        <StackPanel HorizontalAlignment="Right" Margin="0 15 0 0" Width="225">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Excel " Margin="0 0 80 0"/>
-                    <mah:ToggleSwitch x:Name="ExcelToggle"
-                                  Toggled="ExcelSelection"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" >
-                    <TextBlock Text="OneDrive Desktop" Margin="0 0 2 0"/>
-                    <mah:ToggleSwitch x:Name="OneDriveDesktopToggle" 
-                          Toggled="OneDriveDesktopSelection"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Outlook" Margin="0 0 65 0"/>
-                    <mah:ToggleSwitch x:Name="OutlookToggle" 
-                          Toggled="OutlookSelection"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Publisher" Margin="0 0 58 0"/>
-                    <mah:ToggleSwitch x:Name="PublisherToggle" 
-                          Toggled="PublisherSelection"/>
-                </StackPanel>
+        <StackPanel
+            Width="225"
+            Margin="0,15,0,0"
+            HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="0,0,80,0" Text="Excel " />
+                <mah:ToggleSwitch x:Name="ExcelToggle" Toggled="ExcelSelection" />
             </StackPanel>
-        <Button x:Name="ConfirmButton" Width="90" Height="30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Confirm" Content="Подтвердить" Margin="0 0 0 10"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="0,0,2,0" Text="OneDrive Desktop" />
+                <mah:ToggleSwitch x:Name="OneDriveDesktopToggle" Toggled="OneDriveDesktopSelection" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="0,0,65,0" Text="Outlook" />
+                <mah:ToggleSwitch x:Name="OutlookToggle" Toggled="OutlookSelection" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="0,0,58,0" Text="Publisher" />
+                <mah:ToggleSwitch x:Name="PublisherToggle" Toggled="PublisherSelection" />
+            </StackPanel>
+        </StackPanel>
+        <Button
+            x:Name="ConfirmButton"
+            Width="90"
+            Height="30"
+            Margin="0,0,0,10"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Click="Confirm"
+            Content="Подтвердить" />
     </Grid>
 </mah:MetroWindow>
