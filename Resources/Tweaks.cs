@@ -52,6 +52,16 @@ namespace Programmka
 
             await processCompletion.Task;
         }
+        public static void RunInPowerShell(string command, string arguments = "")
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = $"{arguments} -Command \"{command}\"",
+                UseShellExecute = true,
+                Verb = "runas"
+            });
+        }
         public static string OpenFolderDialog()
         {
             var dialog = new Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog
@@ -85,7 +95,7 @@ namespace Programmka
                     FileInfo fileInfo = new(file);
                     folderSize += fileInfo.Length;
                 }
-                catch (UnauthorizedAccessException) { }
+                catch (Exception) { }
             }
             return folderSize;
         }
@@ -129,40 +139,67 @@ namespace Programmka
 
         #region Register
         /// <summary>
-        /// For Registry.LocalMachine
+        /// RegistryHive.CurrentUser or RegistryHive.LocalMachine
         /// </summary>
-        public static bool ContainsReg(string subkey, string key)
+        public static bool ContainsReg(RegistryHive registryHive, string subkey, string key)
         {
-            using var hkey = Registry.LocalMachine.OpenSubKey(subkey);
+            RegistryKey baseKey = (object)registryHive switch
+            {
+                RegistryHive.CurrentUser => Registry.CurrentUser,
+                RegistryHive.LocalMachine => Registry.LocalMachine,
+                _ => null
+            };
+
+            using var hkey = baseKey.OpenSubKey(subkey);
             return hkey?.GetValue(key) != null;
         }
         /// <summary>
-        /// For Registry.CurrentUser;   value = int
+        /// RegistryHive.CurrentUser or RegistryHive.LocalMachine ||| value = int/DWORD
         /// </summary>
-        public static bool ContainsRegValue(string subkey, string key, int value)
+        public static bool ContainsRegValue(RegistryHive registryHive, string subkey, string key, int value)
         {
-            using var target = Registry.CurrentUser.OpenSubKey(subkey);
+            RegistryKey baseKey = (object)registryHive switch
+            {
+                RegistryHive.CurrentUser => Registry.CurrentUser,
+                RegistryHive.LocalMachine => Registry.LocalMachine,
+                _ => null
+            };
+
+            using var target = baseKey.OpenSubKey(subkey);
             if (target != null)
             {
                 var targetValue = target.GetValue(key);
                 if (targetValue is int intValue)
                 {
-                    return intValue != value;
+                    return intValue == value;
                 }
             }
-            return true;
+            return false;
         }
         public static void DeleteReg(string subkey, string key)
         {
             using var hKey = Registry.LocalMachine.OpenSubKey(subkey, true);
             hKey?.DeleteValue(key);
         }
-        public static void CreateReg(string subkey, string key, string dir = "", string value = "")
+        public static void CreateReg(RegistryHive registryHive, string subkey, string key, string dir = "", string sValue = "", int iValue = 0)
         {
-            using var target = Registry.LocalMachine.CreateSubKey(subkey);
+            RegistryKey baseKey = (object)registryHive switch
+            {
+                RegistryHive.CurrentUser => Registry.CurrentUser,
+                RegistryHive.LocalMachine => Registry.LocalMachine,
+                _ => null
+            };
+            using var target = baseKey.CreateSubKey(subkey);
             if (target == null) return;
             var registryKey = string.IsNullOrEmpty(dir) ? target : target.CreateSubKey(dir, true);
-            registryKey?.SetValue(key, value, RegistryValueKind.String);
+            if (string.IsNullOrEmpty(sValue))
+            {
+                registryKey?.SetValue(key, iValue, RegistryValueKind.DWord);
+            }
+            else
+            {
+                registryKey?.SetValue(key, sValue, RegistryValueKind.String);
+            }
         }
         public static void DeleteRegDir(string subkey, string dir)
         {

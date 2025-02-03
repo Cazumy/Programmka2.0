@@ -22,23 +22,25 @@ public partial class MainWindow
         QuickAccessButton.IsChecked = CheckQuickAccess();
         Objects3DButton.IsChecked = Check3DObjects();
         NetworkIconButton.IsChecked = CheckNetworkIcon();
+        FileExtensionsButton.IsChecked = CheckFileExtensions();
         WallpaperCompressionButton.IsChecked = CheckWallpaperCompression();
+        ExeNotificationsButton.IsChecked = CheckExeNotifications();
     }
     #region checks for ToggleButtons
     private static bool CheckDuplicate()
     {
-        return Registry.LocalMachine.OpenSubKey(
-                   @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders\{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}") == null;
+        const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders\{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
+        return Registry.LocalMachine.OpenSubKey(subkey) == null;
     }
     private static bool CheckQuickAccess()
     {
         const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", key = "HubMode";
-        return Methods.ContainsReg(subKey, key);
+        return Methods.ContainsReg(RegistryHive.CurrentUser ,subKey, key);
     }
     private static bool Check3DObjects()
     {
-        return Registry.LocalMachine.OpenSubKey(
-            @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}") == null;
+        const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
+        return Registry.LocalMachine.OpenSubKey(subkey) == null;
     }
     private static bool CheckNetworkIcon()
     {
@@ -55,17 +57,31 @@ public partial class MainWindow
             }
         }
         const string subkey = @"SOFTWARE\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"; const string key = "System.IsPinnedtoNameSpaceTree"; const int value = 0;
-        return !(attributes && Methods.ContainsRegValue(subkey, key, value));
+        return !(attributes && Methods.ContainsRegValue(RegistryHive.CurrentUser ,subkey, key, value));
+    }
+    private static bool CheckFileExtensions()
+    {
+        const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced";
+        const string key = "HideFileExt";
+        return Methods.ContainsRegValue(RegistryHive.CurrentUser, subkey, key, 0);
     }
     private static bool CheckLabels()
     {
         const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons", key = "29";
-        return Methods.ContainsReg(subKey, key);
+        return Methods.ContainsReg(RegistryHive.LocalMachine, subKey, key);
     }
     private static bool CheckWallpaperCompression()
     {
         const string subKey = @"Control Panel\Desktop"; const string key = "JPEGImportQuality"; const int value = 256;
-        return !Methods.ContainsRegValue(subKey, key, value);
+        return Methods.ContainsRegValue(RegistryHive.CurrentUser, subKey, key, value);
+    }
+    private static bool CheckExeNotifications()
+    {
+        const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System";
+        const string key1 = "ConsentPromptBehaviorAdmin";
+        const string key2 = "EnableLUA";
+        const string key3 = "PromptOnSecureDesktop";
+        return Methods.ContainsRegValue(RegistryHive.LocalMachine, subkey, key1, 0) && Methods.ContainsRegValue(RegistryHive.LocalMachine, subkey, key2, 0) && Methods.ContainsRegValue(RegistryHive.LocalMachine, subkey, key3, 0);
     }
     #endregion
     #region tweaks
@@ -84,7 +100,7 @@ public partial class MainWindow
             const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
             const string dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
             const string key = "Removable Drives";
-            Methods.CreateReg(subkey, key, dir);
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key, dir);
         }
     }
     private void QuickAccess(object sender, RoutedEventArgs e)
@@ -95,7 +111,7 @@ public partial class MainWindow
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
             const string key = "HubMode";
             const string value = "1";
-            Methods.CreateReg(subKey, key, "", value);
+            Methods.CreateReg(RegistryHive.LocalMachine, subKey, key, "", value);
         }
         else
         {
@@ -152,6 +168,22 @@ public partial class MainWindow
             Methods.RunInCMD(commands);
         }
     }
+    private void FileExtensions(object sender, RoutedEventArgs e)
+    {
+        if (_ignoreToggleEvents) return;
+        const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced";
+        const string key = "HideFileExt";
+        if (FileExtensionsButton.IsChecked == true)
+        {
+            const int value = 0;
+            Methods.CreateReg(RegistryHive.CurrentUser, subkey, key, "", "", value);
+        }
+        else
+        {
+            const int value = 1;
+            Methods.CreateReg(RegistryHive.CurrentUser, subkey, key, "", "", value);
+        }
+    }
     private void ReloadExplorer(object sender, RoutedEventArgs e)
     {
         foreach (var process in Process.GetProcessesByName("explorer"))
@@ -167,9 +199,10 @@ public partial class MainWindow
         if (_ignoreToggleEvents) return;
         if (LabelArrowsButton.IsChecked == true)
         {
-            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
+            const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
             const string key = "29";
-            Methods.CreateReg(subKey, key);
+            using var target = Registry.LocalMachine.CreateSubKey(subkey);
+            target?.SetValue(key, "", RegistryValueKind.String);
         }
         else
         {
@@ -189,12 +222,32 @@ public partial class MainWindow
             Methods.SetWallpaperCompressionQuality(128);
         }
     }
+    private void ExeNotifications(object sender, RoutedEventArgs e)
+    {
+        if (_ignoreToggleEvents) { return; }
+        const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System";
+        const string key1 = "ConsentPromptBehaviorAdmin";
+        const string key2 = "EnableLUA";
+        const string key3 = "PromptOnSecureDesktop";
+        if (ExeNotificationsButton.IsChecked == true)
+        {
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key1, "", "", 0);
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key2, "", "", 0);
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key3, "", "", 0);
+        }
+        else
+        {
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key1, "", "", 2);
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key2, "", "", 1);
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key3, "", "", 1);
+        }
+    }
     private void ChangeHighlightColor(object sender, RoutedEventArgs e) { }
     #endregion
     #region activation tweaks
     private void ActivateWindows(object sender, RoutedEventArgs e)
     {
-        System.Windows.Forms.MessageBox.Show("Нажмите на клавиатуре клавишу \"1\" для активации Windows или клавишу \"2\" для активации продуктов Office", "Когда откроется окно с выбором для активации");
+        MessageBox.Show("Нажмите на клавиатуре клавишу \"1\" для активации Windows или клавишу \"2\" для активации продуктов Office", "Когда откроется окно с выбором для активации");
         var cmdProcessInfo = new ProcessStartInfo
         {
             FileName = "cmd.exe",
@@ -221,7 +274,7 @@ public partial class MainWindow
         if (result == System.Windows.Forms.DialogResult.Yes)
         {
             path = Methods.OpenFolderDialog();
-            if(string.IsNullOrEmpty(path)) { path = @"C:\Program Files\WinRAR"; }
+            if(string.IsNullOrEmpty(path)) { return; }
         }
         else
         {
@@ -239,6 +292,10 @@ be9caf70ca9cee8199c54758f64acc9c27d3968d5e69ecb901b91d
 538d079f9f1fd1a81d656627d962bf547c38ebbda774df21605c33
 eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         System.IO.File.WriteAllText(path + @"\rarreg.key.txt", key);
+    }
+    private void BecameAdminWin10(object sender, RoutedEventArgs e)
+    {
+        Methods.RunInCMD($"net user {System.Environment.UserName} /active:yes");
     }
     #endregion
     #region fix tweaks
@@ -318,8 +375,18 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     }
     #endregion
     #region cleanup
+    private void CheckWinSxS(object sender, RoutedEventArgs e)
+    {
+        const string command = "Dism.exe /Online /Cleanup-Image /AnalyzeComponentStore";
+        Methods.RunInPowerShell(command, "-NoExit");
+    }
     private void CleanupWinSxS(object sender, RoutedEventArgs e)
-    {     }
+    {
+        const string command1 = "Dism.exe /Online /Cleanup-Image /StartComponentCleanup";
+        Methods.RunInPowerShell(command1);
+        const string command2 = "Dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase";
+        Methods.RunInPowerShell(command2);
+    }
     private void CleanupTemp(object sender, RoutedEventArgs e)
     {
         long prevSize = Methods.GetFullTempSize();
