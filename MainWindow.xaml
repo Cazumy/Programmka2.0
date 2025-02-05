@@ -154,7 +154,7 @@
             TabStripPlacement="Top">
             <TabItem x:Name="fileExplorerItem" Tag="pack://application:,,,/Programmka;component/Resources\Images\file_explorer.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
-                    <StackPanel Margin="420,80,32,20">
+                    <StackPanel Margin="420,10,5,10">
                         <Grid Style="{StaticResource GridForTweaks}">
                             <ContentControl
                                 Content="Дубликаты дисков"
@@ -206,35 +206,6 @@
                                 Unchecked="FileExtensions" />
                         </Grid>
                         <Grid Style="{StaticResource GridForTweaks}">
-                            <Button Click="ReloadExplorer" Content="Перезагрузить проводник" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
-            </TabItem>
-            <TabItem x:Name="desktopItem" Tag="pack://application:,,,/Programmka;component/Resources\Images\desktop.png">
-                <Border Style="{StaticResource TabContentBorderStyle}">
-                    <StackPanel Margin="460,140,32,20">
-                        <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl
-                                Content="Стрелки на ярлыках"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                Tag="pack://application:,,,/Programmka;component/Resources\Images\label.png" />
-                            <ToggleButton
-                                x:Name="LabelArrowsButton"
-                                Checked="LabelArrows"
-                                Unchecked="LabelArrows" />
-                        </Grid>
-                        <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl
-                                Content="Сжатие обоев рабочего стола"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                Tag="pack://application:,,,/Programmka;component/Resources\Images\WallpaperCompression.png" />
-                            <ToggleButton
-                                x:Name="WallpaperCompressionButton"
-                                Checked="WallpaperCompression"
-                                Unchecked="WallpaperCompression" />
-                        </Grid>
-                        <Grid Style="{StaticResource GridForTweaks}">
                             <ContentControl
                                 Content="Уведомления при запуске .exe"
                                 Style="{StaticResource ToggleButtonBackgroundStyle}"
@@ -244,12 +215,48 @@
                                 Checked="ExeNotifications"
                                 Unchecked="ExeNotifications" />
                         </Grid>
-                        <Button
-                            x:Name="highlightColorChanger"
-                            Width="100"
-                            Height="60"
-                            Click="ChangeHighlightColor"
-                            Content="Поменять цвет выделения" />
+                        <Grid Style="{StaticResource GridForTweaks}">
+                            <Button Click="ReloadExplorer" Content="Перезагрузить проводник" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </TabItem>
+            <TabItem x:Name="desktopItem" Tag="pack://application:,,,/Programmka;component/Resources\Images\desktop.png">
+                <Border Style="{StaticResource TabContentBorderStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid x:Name="desktopShowcase" Width="370" Height="209" Margin="20 -30 30 0" VerticalAlignment="Center">
+                            <Image x:Name="WallpaperImage" Stretch="Uniform" />
+                            <Image Source="Resources\Images\Showcase\msedge.png" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10 10 0 0"/>
+                            <Image x:Name="LabelarrowShowcase" Source="Resources\Images\Showcase\labelarrow.png" Width="10" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10 26 0 0"/>
+                        </Grid>
+                        <StackPanel VerticalAlignment="Center" Width="400" HorizontalAlignment="Right">
+                            <Grid Style="{StaticResource GridForTweaks}">
+                                <ContentControl
+                                    Content="Стрелки на ярлыках"
+                                    Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                    Tag="pack://application:,,,/Programmka;component/Resources\Images\label.png" />
+                                <ToggleButton
+                                    x:Name="LabelArrowsButton"
+                                    Checked="LabelArrows"
+                                    Unchecked="LabelArrows" />
+                            </Grid>
+                            <Grid Style="{StaticResource GridForTweaks}">
+                                <ContentControl
+                                    Content="Сжатие обоев рабочего стола"
+                                    Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                    Tag="pack://application:,,,/Programmka;component/Resources\Images\WallpaperCompression.png" />
+                                <ToggleButton
+                                    x:Name="WallpaperCompressionButton"
+                                    Checked="WallpaperCompression"
+                                    Unchecked="WallpaperCompression" />
+                            </Grid>
+                            <Button
+                                x:Name="highlightColorChanger"
+                                Width="100"
+                                Height="60"
+                                Click="ChangeHighlightColor"
+                                Content="Поменять цвет выделения" />
+                        </StackPanel>
                     </StackPanel>
                 </Border>
             </TabItem>

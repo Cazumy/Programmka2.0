@@ -1,7 +1,14 @@
 ﻿using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace Programmka;
 public partial class MainWindow
@@ -11,20 +18,40 @@ public partial class MainWindow
     {
         InitializeComponent();
         InitializeToggleButtons();
+        LoadWallpaperImage();
+        InitializeShowcase();
         _ignoreToggleEvents = false;
         tempSizeText.Text = Methods.NormalizeByteSyze(Methods.GetFullTempSize());
+        this.Closing += MainWindow_Closing;
     }
 
     private void InitializeToggleButtons()
     {
         DiskDuplicateButton.IsChecked = CheckDuplicate();
-        LabelArrowsButton.IsChecked = CheckLabels();
         QuickAccessButton.IsChecked = CheckQuickAccess();
         Objects3DButton.IsChecked = Check3DObjects();
         NetworkIconButton.IsChecked = CheckNetworkIcon();
         FileExtensionsButton.IsChecked = CheckFileExtensions();
-        WallpaperCompressionButton.IsChecked = CheckWallpaperCompression();
         ExeNotificationsButton.IsChecked = CheckExeNotifications();
+        LabelArrowsButton.IsChecked = CheckLabels();
+        WallpaperCompressionButton.IsChecked = CheckWallpaperCompression();
+    }
+    private void InitializeShowcase()
+    {
+        LabelarrowShowcase.Visibility = (bool)LabelArrowsButton.IsChecked ? Visibility.Collapsed : Visibility.Visible;
+        LoadWallpaperImage();
+        SetWallpaperImage();
+    }
+    private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+        if (Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wallpapers")))
+        {
+            try
+            {
+                Directory.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wallpapers"), true);
+            }
+            catch (Exception) { }
+        }
     }
     #region checks for ToggleButtons
     private static bool CheckDuplicate()
@@ -35,7 +62,7 @@ public partial class MainWindow
     private static bool CheckQuickAccess()
     {
         const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", key = "HubMode";
-        return Methods.ContainsReg(RegistryHive.CurrentUser ,subKey, key);
+        return Methods.ContainsReg(RegistryHive.CurrentUser, subKey, key);
     }
     private static bool Check3DObjects()
     {
@@ -57,7 +84,7 @@ public partial class MainWindow
             }
         }
         const string subkey = @"SOFTWARE\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"; const string key = "System.IsPinnedtoNameSpaceTree"; const int value = 0;
-        return !(attributes && Methods.ContainsRegValue(RegistryHive.CurrentUser ,subkey, key, value));
+        return !(attributes && Methods.ContainsRegValue(RegistryHive.CurrentUser, subkey, key, value));
     }
     private static bool CheckFileExtensions()
     {
@@ -184,44 +211,6 @@ public partial class MainWindow
             Methods.CreateReg(RegistryHive.CurrentUser, subkey, key, "", "", value);
         }
     }
-    private void ReloadExplorer(object sender, RoutedEventArgs e)
-    {
-        foreach (var process in Process.GetProcessesByName("explorer"))
-        {
-            process.Kill();
-        }
-        Process.Start("explorer.exe");
-    }
-    #endregion
-    #region desktop tweaks
-    private void LabelArrows(object sender, RoutedEventArgs e)
-    {
-        if (_ignoreToggleEvents) return;
-        if (LabelArrowsButton.IsChecked == true)
-        {
-            const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
-            const string key = "29";
-            using var target = Registry.LocalMachine.CreateSubKey(subkey);
-            target?.SetValue(key, "", RegistryValueKind.String);
-        }
-        else
-        {
-            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\"; const string dir = "Shell Icons";
-            Methods.DeleteRegDir(subKey, dir);
-        }
-    }
-    private void WallpaperCompression(object sender, RoutedEventArgs e)
-    {
-        if (_ignoreToggleEvents) return;
-        if (WallpaperCompressionButton.IsChecked == true)
-        {
-            Methods.SetWallpaperCompressionQuality(256);
-        }
-        else
-        {
-            Methods.SetWallpaperCompressionQuality(128);
-        }
-    }
     private void ExeNotifications(object sender, RoutedEventArgs e)
     {
         if (_ignoreToggleEvents) { return; }
@@ -242,6 +231,94 @@ public partial class MainWindow
             Methods.CreateReg(RegistryHive.LocalMachine, subkey, key3, "", "", 1);
         }
     }
+    private void ReloadExplorer(object sender, RoutedEventArgs e)
+    {
+        foreach (var process in Process.GetProcessesByName("explorer"))
+        {
+            process.Kill();
+        }
+        Process.Start("explorer.exe");
+    }
+    #endregion
+    #region desktop tweaks
+    private string _wallpaperPath;
+    private string _compressedWallpaperPath;
+    private void LoadWallpaperImage()
+    {
+        const string registryKey = @"Control Panel\Desktop";
+        const string registryValue = "WallPaper";
+        using RegistryKey key = Registry.CurrentUser.OpenSubKey(registryKey);
+        if (key == null) return;
+
+        string wallpaper = key.GetValue(registryValue)?.ToString();
+        if (string.IsNullOrEmpty(wallpaper) && !File.Exists(wallpaper))
+        {
+            desktopShowcase.Visibility = Visibility.Collapsed;
+            return;
+
+        }
+
+        string appFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wallpapers");
+        if (!Directory.Exists(appFolder))
+            Directory.CreateDirectory(appFolder);
+
+        string compressedWallpaper = Path.Combine(appFolder, "compressed_wallpaper.jpg");
+
+        using (var bmp = new Bitmap(wallpaper))
+        using (var ms = new MemoryStream())
+        {
+            var jpegCodec = ImageCodecInfo.GetImageDecoders()
+                .FirstOrDefault(c => c.FormatID == ImageFormat.Jpeg.Guid);
+            var encoderParams = new EncoderParameters(1);
+            encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 35L);
+            bmp.Save(compressedWallpaper, jpegCodec, encoderParams);
+        }
+
+        _wallpaperPath = wallpaper;
+        _compressedWallpaperPath = compressedWallpaper;
+    }
+    private void SetWallpaperImage()
+    {
+        var bitmap = new BitmapImage();
+        bitmap.BeginInit();
+        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+        bitmap.UriSource = new Uri((bool)WallpaperCompressionButton.IsChecked ? _wallpaperPath : _compressedWallpaperPath);
+        bitmap.EndInit();
+        bitmap.Freeze();
+        WallpaperImage.Source = bitmap;
+    }
+    private void LabelArrows(object sender, RoutedEventArgs e)
+    {
+        if (_ignoreToggleEvents) return;
+        if (LabelArrowsButton.IsChecked == true)
+        {
+            LabelarrowShowcase.Visibility = Visibility.Collapsed;
+            const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
+            const string key = "29";
+            using var target = Registry.LocalMachine.CreateSubKey(subkey);
+            target?.SetValue(key, "", RegistryValueKind.String);
+        }
+        else
+        {
+            LabelarrowShowcase.Visibility = Visibility.Visible;
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\"; const string dir = "Shell Icons";
+            Methods.DeleteRegDir(subKey, dir);
+        }
+    }
+    private void WallpaperCompression(object sender, RoutedEventArgs e)
+    {
+        if (_ignoreToggleEvents) return;
+        if (WallpaperCompressionButton.IsChecked == true)
+        {
+            SetWallpaperImage();
+            Methods.SetWallpaperCompressionQuality(256);
+        }
+        else
+        {
+            SetWallpaperImage();
+            Methods.SetWallpaperCompressionQuality(128);
+        }
+    }
     private void ChangeHighlightColor(object sender, RoutedEventArgs e) { }
     #endregion
     #region activation tweaks
@@ -260,26 +337,31 @@ public partial class MainWindow
     }
     private void ActivateWinRar(object sender, RoutedEventArgs e)
     {
-        var result = System.Windows.Forms.MessageBox.Show(
-        "Вы меняли директорию по умолчанию для установки WINRAR?",
-        "Ответьте на вопрос",
-        System.Windows.Forms.MessageBoxButtons.YesNoCancel,
-        System.Windows.Forms.MessageBoxIcon.Question
-        );
-        string path;
-        if (result == System.Windows.Forms.DialogResult.Cancel)
+        var dialog = new TaskDialog
         {
-            return;
-        }
-        if (result == System.Windows.Forms.DialogResult.Yes)
+            Caption = "Ответьте на вопрос",
+            InstructionText = "Вы меняли директорию по умолчанию для установки WINRAR?",
+            Icon = TaskDialogStandardIcon.Information,
+            StandardButtons = TaskDialogStandardButtons.Yes |
+                              TaskDialogStandardButtons.No |
+                              TaskDialogStandardButtons.Cancel
+        };
+        var result = dialog.Show();
+        string selectedFolderPath = null;
+        if (result == TaskDialogResult.Cancel) { return; }
+        else if (result == TaskDialogResult.No)
         {
-            path = Methods.OpenFolderDialog();
-            if(string.IsNullOrEmpty(path)) { return; }
+            selectedFolderPath = @"C:\Program Files\WinRAR";
         }
         else
         {
-            path = @"C:\Program Files\WinRAR";
+            var folderDialog = new CommonOpenFileDialog { IsFolderPicker = true };
+            if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                selectedFolderPath = folderDialog.FileName;
+            }
         }
+        if (string.IsNullOrEmpty(selectedFolderPath)) return;
         const string key = @"RAR registration data
 PROMSTROI GROUP
 15 PC usage license
@@ -291,7 +373,7 @@ ed467e6e4f126e19cccccf98c3b9f98c4660341d700d11a5c1aa52
 be9caf70ca9cee8199c54758f64acc9c27d3968d5e69ecb901b91d
 538d079f9f1fd1a81d656627d962bf547c38ebbda774df21605c33
 eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
-        System.IO.File.WriteAllText(path + @"\rarreg.key.txt", key);
+        System.IO.File.WriteAllText(selectedFolderPath + @"\rarreg.key.txt", key);
     }
     private void BecameAdminWin10(object sender, RoutedEventArgs e)
     {
@@ -316,7 +398,8 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     }
     #endregion
     #region downloads
-    private void DownloadHEVC(object sender, RoutedEventArgs e){
+    private void DownloadHEVC(object sender, RoutedEventArgs e)
+    {
         const string hevcRef = "http://tlu.dl.delivery.mp.microsoft.com/filestreamingservice/files/86f234a3-c022-48ad-a121-d789ee364721?P1=1737659645&P2=404&P3=2&P4=R%2bRHDulYTwrstLR2z0OgSN%2bMyIYAJm3dGBNVKGcM8QVwNABYBnD%2bTTvlvHqJAeQW3cikKB%2b0zzZnvKAKdTPiLQ%3d%3d";
         Process.Start(new ProcessStartInfo
         {
