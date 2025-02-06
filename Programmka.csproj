@@ -255,6 +255,18 @@
   <ItemGroup>
     <Resource Include="Resources\Images\Showcase\labelarrow.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Showcase\explorer_ex.png" />
+    <Resource Include="Resources\Images\Showcase\explorer_noex.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Showcase\3d.png" />
+    <Resource Include="Resources\Images\Showcase\bot.png" />
+    <Resource Include="Resources\Images\Showcase\dd.png" />
+    <Resource Include="Resources\Images\Showcase\head.png" />
+    <Resource Include="Resources\Images\Showcase\ni.png" />
+    <Resource Include="Resources\Images\Showcase\qa.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

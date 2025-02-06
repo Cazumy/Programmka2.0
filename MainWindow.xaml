@@ -129,7 +129,7 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid Width="880" Height="450">
+    <Grid Width="1000" Height="600">
         <Image
             Height="50px"
             Margin="8"
@@ -154,82 +154,117 @@
             TabStripPlacement="Top">
             <TabItem x:Name="fileExplorerItem" Tag="pack://application:,,,/Programmka;component/Resources\Images\file_explorer.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
-                    <StackPanel Margin="420,10,5,10">
-                        <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl
-                                Content="Дубликаты дисков"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                Tag="pack://application:,,,/Programmka;component/Resources\Images\disk.png" />
-                            <ToggleButton
-                                x:Name="DiskDuplicateButton"
-                                Checked="DiskDuplicate"
-                                Unchecked="DiskDuplicate" />
+                    <StackPanel Orientation="Horizontal">
+                        <Grid
+                            x:Name="explorerShowcase"
+                            Width="600"
+                            Margin="5,-15,0,0"
+                            VerticalAlignment="Center">
+                            <Image x:Name="explorerShowcaseImage" Source="Resources\Images\Showcase\explorer_ex.png"/>
+                            <StackPanel HorizontalAlignment="Left" Margin="1 69 0 20" Width="149">
+                                <Image x:Name="qaImage" Source="Resources\Images\Showcase\qa.png"/>
+                                <Image Source="Resources\Images\Showcase\head.png"/>
+                                <Image x:Name="tdoImage" Source="Resources\Images\Showcase\3d.png"/>
+                                <Image Source="Resources\Images\Showcase\bot.png"/>
+                                <Image x:Name="ddImage" Source="Resources\Images\Showcase\dd.png"/>
+                                <Image x:Name="niImage" Source="Resources\Images\Showcase\ni.png"/>
+                            </StackPanel>
                         </Grid>
-                        <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl
-                                Content="Пункт &quot;Быстрый доступ&quot;"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                Tag="pack://application:,,,/Programmka;component/Resources\Images\quick_access.png" />
-                            <ToggleButton
-                                x:Name="QuickAccessButton"
-                                Checked="QuickAccess"
-                                Unchecked="QuickAccess" />
-                        </Grid>
-                        <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl
-                                Content="Папка &quot;Объёмные объекты&quot;"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                Tag="pack://application:,,,/Programmka;component/Resources/Images/3d_objects.png" />
-                            <ToggleButton
-                                x:Name="Objects3DButton"
-                                Checked="Objects3D"
-                                Unchecked="Objects3D" />
-                        </Grid>
-                        <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl
-                                Content="Значок &quot;Сеть&quot;"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                Tag="pack://application:,,,/Programmka;component/Resources\Images\network.png" />
-                            <ToggleButton
-                                x:Name="NetworkIconButton"
-                                Checked="NetworkIcon"
-                                Unchecked="NetworkIcon" />
-                        </Grid>
-                        <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl
-                                Content="Отобразить расширения файлов"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                Tag="pack://application:,,,/Programmka;component/Resources\Images\fileExtensions.png" />
-                            <ToggleButton
-                                x:Name="FileExtensionsButton"
-                                Checked="FileExtensions"
-                                Unchecked="FileExtensions" />
-                        </Grid>
-                        <Grid Style="{StaticResource GridForTweaks}">
-                            <ContentControl
-                                Content="Уведомления при запуске .exe"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                Tag="pack://application:,,,/Programmka;component/Resources\Images\exeNotifications.png" />
-                            <ToggleButton
-                                x:Name="ExeNotificationsButton"
-                                Checked="ExeNotifications"
-                                Unchecked="ExeNotifications" />
-                        </Grid>
-                        <Grid Style="{StaticResource GridForTweaks}">
-                            <Button Click="ReloadExplorer" Content="Перезагрузить проводник" />
-                        </Grid>
+                        <StackPanel Margin="20,20,0,10" VerticalAlignment="Center">
+                            <Grid Style="{StaticResource GridForTweaks}">
+                                <ContentControl
+                                    Content="Дубликаты дисков"
+                                    Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                    Tag="pack://application:,,,/Programmka;component/Resources\Images\disk.png" />
+                                <ToggleButton
+                                    x:Name="DiskDuplicateButton"
+                                    Checked="DiskDuplicate"
+                                    Unchecked="DiskDuplicate" />
+                            </Grid>
+                            <Grid Style="{StaticResource GridForTweaks}">
+                                <ContentControl
+                                    Content="Пункт &quot;Быстрый доступ&quot;"
+                                    Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                    Tag="pack://application:,,,/Programmka;component/Resources\Images\quick_access.png" />
+                                <ToggleButton
+                                    x:Name="QuickAccessButton"
+                                    Checked="QuickAccess"
+                                    Unchecked="QuickAccess" />
+                            </Grid>
+                            <Grid Style="{StaticResource GridForTweaks}">
+                                <ContentControl
+                                    Content="Папка &quot;Объёмные объекты&quot;"
+                                    Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                    Tag="pack://application:,,,/Programmka;component/Resources/Images/3d_objects.png" />
+                                <ToggleButton
+                                    x:Name="Objects3DButton"
+                                    Checked="Objects3D"
+                                    Unchecked="Objects3D" />
+                            </Grid>
+                            <Grid Style="{StaticResource GridForTweaks}">
+                                <ContentControl
+                                    Content="Значок &quot;Сеть&quot;"
+                                    Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                    Tag="pack://application:,,,/Programmka;component/Resources\Images\network.png" />
+                                <ToggleButton
+                                    x:Name="NetworkIconButton"
+                                    Checked="NetworkIcon"
+                                    Unchecked="NetworkIcon" />
+                            </Grid>
+                            <Grid Style="{StaticResource GridForTweaks}">
+                                <ContentControl
+                                    Content="Отобразить расширения файлов"
+                                    Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                    Tag="pack://application:,,,/Programmka;component/Resources\Images\fileExtensions.png" />
+                                <ToggleButton
+                                    x:Name="FileExtensionsButton"
+                                    Checked="FileExtensions"
+                                    Unchecked="FileExtensions" />
+                            </Grid>
+                            <Grid Style="{StaticResource GridForTweaks}">
+                                <ContentControl
+                                    Content="Уведомления при запуске .exe"
+                                    Style="{StaticResource ToggleButtonBackgroundStyle}"
+                                    Tag="pack://application:,,,/Programmka;component/Resources\Images\exeNotifications.png" />
+                                <ToggleButton
+                                    x:Name="ExeNotificationsButton"
+                                    Checked="ExeNotifications"
+                                    Unchecked="ExeNotifications" />
+                            </Grid>
+                            <Grid Style="{StaticResource GridForTweaks}">
+                                <Button Click="ReloadExplorer" Content="Перезагрузить проводник" />
+                            </Grid>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
             </TabItem>
             <TabItem x:Name="desktopItem" Tag="pack://application:,,,/Programmka;component/Resources\Images\desktop.png">
                 <Border Style="{StaticResource TabContentBorderStyle}">
                     <StackPanel Orientation="Horizontal">
-                        <Grid x:Name="desktopShowcase" Width="370" Height="209" Margin="20 -30 30 0" VerticalAlignment="Center">
+                        <Grid
+                            x:Name="desktopShowcase"
+                            Width="500"
+                            Margin="20,-30,30,0"
+                            VerticalAlignment="Center">
                             <Image x:Name="WallpaperImage" Stretch="Uniform" />
-                            <Image Source="Resources\Images\Showcase\msedge.png" Width="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10 10 0 0"/>
-                            <Image x:Name="LabelarrowShowcase" Source="Resources\Images\Showcase\labelarrow.png" Width="10" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10 26 0 0"/>
+                            <Image
+                                Width="30"
+                                Margin="10,10,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Source="Resources\Images\Showcase\msedge.png" />
+                            <Image
+                                x:Name="LabelarrowShowcase"
+                                Width="10"
+                                Margin="10,26,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Source="Resources\Images\Showcase\labelarrow.png" />
                         </Grid>
-                        <StackPanel VerticalAlignment="Center" Width="400" HorizontalAlignment="Right">
+                        <StackPanel
+                            Width="400"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
                             <Grid Style="{StaticResource GridForTweaks}">
                                 <ContentControl
                                     Content="Стрелки на ярлыках"

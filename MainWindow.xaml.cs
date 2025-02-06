@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 
 namespace Programmka;
 public partial class MainWindow
@@ -18,11 +17,10 @@ public partial class MainWindow
     {
         InitializeComponent();
         InitializeToggleButtons();
-        LoadWallpaperImage();
         InitializeShowcase();
         _ignoreToggleEvents = false;
         tempSizeText.Text = Methods.NormalizeByteSyze(Methods.GetFullTempSize());
-        this.Closing += MainWindow_Closing;
+        Closing += MainWindow_Closing;
     }
 
     private void InitializeToggleButtons()
@@ -38,9 +36,19 @@ public partial class MainWindow
     }
     private void InitializeShowcase()
     {
-        LabelarrowShowcase.Visibility = (bool)LabelArrowsButton.IsChecked ? Visibility.Collapsed : Visibility.Visible;
+        #region explorer
+        SetExplorerImage();
+        qaImage.Width = CheckQuickAccess() ? 0 : 149;
+        tdoImage.Width = Check3DObjects() ? 0 : 149;
+        ddImage.Width = CheckDuplicate() ? 0 : 149;
+        niImage.Width = CheckNetworkIcon() ? 0 : 149;
+        #endregion
+        #region desktop
         LoadWallpaperImage();
+        desktopShowcase.Visibility = (!string.IsNullOrEmpty(_wallpaperPath) && !string.IsNullOrEmpty(_compressedWallpaperPath)) ? Visibility.Visible : Visibility.Collapsed;
         SetWallpaperImage();
+        LabelarrowShowcase.Visibility = CheckLabels() ? Visibility.Collapsed : Visibility.Visible;
+        #endregion
     }
     private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
@@ -84,7 +92,7 @@ public partial class MainWindow
             }
         }
         const string subkey = @"SOFTWARE\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"; const string key = "System.IsPinnedtoNameSpaceTree"; const int value = 0;
-        return !(attributes && Methods.ContainsRegValue(RegistryHive.CurrentUser, subkey, key, value));
+        return !(attributes && !Methods.ContainsRegValue(RegistryHive.CurrentUser, subkey, key, value));
     }
     private static bool CheckFileExtensions()
     {
@@ -113,17 +121,30 @@ public partial class MainWindow
     #endregion
     #region tweaks
     #region explorer tweaks
+    private void SetExplorerImage()
+    {
+        var bitmap = new System.Windows.Media.Imaging.BitmapImage();
+        bitmap.BeginInit();
+        bitmap.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+        bitmap.UriSource = new Uri(CheckFileExtensions() ?
+            "pack://application:,,,/Resources/Images/Showcase/explorer_ex.png" :
+            "pack://application:,,,/Resources/Images/Showcase/explorer_noex.png", UriKind.Absolute);
+        bitmap.EndInit();
+        explorerShowcaseImage.Source = bitmap;
+    }
     private void DiskDuplicate(object sender, RoutedEventArgs e)
     {
         if (_ignoreToggleEvents) return;
         if (DiskDuplicateButton.IsChecked == true)
         {
+            ddImage.Width = 0;
             const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
             const string dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
             Methods.DeleteRegDir(subkey, dir);
         }
         else
         {
+            ddImage.Width = 151;
             const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
             const string dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
             const string key = "Removable Drives";
@@ -135,6 +156,7 @@ public partial class MainWindow
         if (_ignoreToggleEvents) return;
         if (QuickAccessButton.IsChecked == true)
         {
+            qaImage.Width = 0;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
             const string key = "HubMode";
             const string value = "1";
@@ -142,6 +164,7 @@ public partial class MainWindow
         }
         else
         {
+            qaImage.Width = 151;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
             const string key = "HubMode";
             Methods.DeleteReg(subKey, key);
@@ -152,11 +175,13 @@ public partial class MainWindow
         if (_ignoreToggleEvents) return;
         if (Objects3DButton.IsChecked == true)
         {
+            tdoImage.Width = 0;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\"; const string dir = "{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
             Methods.DeleteRegDir(subKey, dir);
         }
         else
         {
+            tdoImage.Width = 151;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
             Methods.CreateRegDir(subKey);
         }
@@ -166,6 +191,7 @@ public partial class MainWindow
         if (_ignoreToggleEvents) return;
         if (NetworkIconButton.IsChecked == true)
         {
+            niImage.Width = 0;
             var commands = new[]
             {
             "reg add \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0940064\" /f >nul 2>&1",
@@ -181,6 +207,7 @@ public partial class MainWindow
         }
         else
         {
+            niImage.Width = 151;
             var commands = new[]
             {
             "reg add \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0040064\" /f >nul 2>&1",
@@ -210,6 +237,7 @@ public partial class MainWindow
             const int value = 1;
             Methods.CreateReg(RegistryHive.CurrentUser, subkey, key, "", "", value);
         }
+        SetExplorerImage();
     }
     private void ExeNotifications(object sender, RoutedEventArgs e)
     {
@@ -241,6 +269,7 @@ public partial class MainWindow
     }
     #endregion
     #region desktop tweaks
+    #region showcase
     private string _wallpaperPath;
     private string _compressedWallpaperPath;
     private void LoadWallpaperImage()
@@ -255,7 +284,6 @@ public partial class MainWindow
         {
             desktopShowcase.Visibility = Visibility.Collapsed;
             return;
-
         }
 
         string appFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wallpapers");
@@ -264,7 +292,7 @@ public partial class MainWindow
 
         string compressedWallpaper = Path.Combine(appFolder, "compressed_wallpaper.jpg");
 
-        using (var bmp = new Bitmap(wallpaper))
+        using (var bmp = new Bitmap(wallpaper))//странно 129038712803710273081273081273
         using (var ms = new MemoryStream())
         {
             var jpegCodec = ImageCodecInfo.GetImageDecoders()
@@ -279,14 +307,15 @@ public partial class MainWindow
     }
     private void SetWallpaperImage()
     {
-        var bitmap = new BitmapImage();
+        var bitmap = new System.Windows.Media.Imaging.BitmapImage();
         bitmap.BeginInit();
-        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-        bitmap.UriSource = new Uri((bool)WallpaperCompressionButton.IsChecked ? _wallpaperPath : _compressedWallpaperPath);
+        bitmap.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+        bitmap.UriSource = new Uri(CheckWallpaperCompression() ? _wallpaperPath : _compressedWallpaperPath);
         bitmap.EndInit();
         bitmap.Freeze();
         WallpaperImage.Source = bitmap;
     }
+    #endregion
     private void LabelArrows(object sender, RoutedEventArgs e)
     {
         if (_ignoreToggleEvents) return;
@@ -310,14 +339,13 @@ public partial class MainWindow
         if (_ignoreToggleEvents) return;
         if (WallpaperCompressionButton.IsChecked == true)
         {
-            SetWallpaperImage();
             Methods.SetWallpaperCompressionQuality(256);
         }
         else
         {
-            SetWallpaperImage();
             Methods.SetWallpaperCompressionQuality(128);
         }
+        SetWallpaperImage();
     }
     private void ChangeHighlightColor(object sender, RoutedEventArgs e) { }
     #endregion
