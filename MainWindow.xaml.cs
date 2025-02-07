@@ -426,15 +426,6 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     }
     #endregion
     #region downloads
-    private void DownloadHEVC(object sender, RoutedEventArgs e)
-    {
-        const string hevcRef = "http://tlu.dl.delivery.mp.microsoft.com/filestreamingservice/files/86f234a3-c022-48ad-a121-d789ee364721?P1=1737659645&P2=404&P3=2&P4=R%2bRHDulYTwrstLR2z0OgSN%2bMyIYAJm3dGBNVKGcM8QVwNABYBnD%2bTTvlvHqJAeQW3cikKB%2b0zzZnvKAKdTPiLQ%3d%3d";
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = hevcRef,
-            UseShellExecute = true
-        });
-    }
     private async void DownloadOffice(object sender, RoutedEventArgs e)
     {
         const string fileName = "Configuration.xml";

@@ -7,6 +7,7 @@
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     Title="Programmka"
     Background="#FF290029"
+    Icon="Resources\RS1.ico"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterScreen">
@@ -257,9 +258,7 @@
                             VerticalAlignment="Top"
                             Source="Resources\Images\Showcase\labelarrow.png" />
                     </Grid>
-                    <StackPanel
-                        Width="320"
-                        VerticalAlignment="Center">
+                    <StackPanel Width="320" VerticalAlignment="Center">
                         <Grid>
                             <ContentControl
                                 Content="Стрелки на ярлыках"
@@ -356,11 +355,6 @@
                     Margin="20,20,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top">
-                    <Button
-                        Width="80"
-                        Height="40"
-                        Click="DownloadHEVC"
-                        Content="HEVC\x265" />
                     <Button
                         Width="80"
                         Height="40"

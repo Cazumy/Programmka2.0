@@ -80,7 +80,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>RS1.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -235,9 +236,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="RS1.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Images\download.png" />
   </ItemGroup>
   <ItemGroup>
@@ -266,6 +264,9 @@
     <Resource Include="Resources\Images\Showcase\head.png" />
     <Resource Include="Resources\Images\Showcase\ni.png" />
     <Resource Include="Resources\Images\Showcase\qa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\RS1.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
