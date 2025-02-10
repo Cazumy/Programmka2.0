@@ -7,7 +7,6 @@
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     Title="Programmka"
     Background="#FF290029"
-    Icon="Resources\RS1.ico"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterScreen">
