@@ -243,6 +243,16 @@
                         Margin="20,-30,50,0"
                         VerticalAlignment="Center">
                         <Image x:Name="WallpaperImage" Stretch="Uniform" />
+                        <Border
+                            x:Name="HighlightColorImage"
+                            Width="200"
+                            Height="100"
+                            HorizontalAlignment="Right"
+                            Background="#300078d7"
+                            BorderBrush="#0078d7"
+                            BorderThickness="1"
+                            Margin="0 0 60 0"/>
+
                         <Image
                             Width="30"
                             Margin="10,10,0,0"

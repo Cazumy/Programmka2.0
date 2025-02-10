@@ -2,11 +2,9 @@
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -283,8 +281,7 @@ public partial class MainWindow
         string wallpaper = key.GetValue(registryValue)?.ToString();
         if (!File.Exists(wallpaper) || string.IsNullOrEmpty(wallpaper))
         {
-            
-            wallpaper = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Microsoft\Windows\Themes\TranscodedWallpaper1");
+            wallpaper = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Microsoft\Windows\Themes\TranscodedWallpaper");
             if (!File.Exists(wallpaper))
             {
                 MessageBox.Show("Аллах акбар");
@@ -299,7 +296,7 @@ public partial class MainWindow
 
         string compressedWallpaper = Path.Combine(appFolder, "compressed_wallpaper.jpg");
 
-        using var bmp = new Bitmap(wallpaper);
+        using var bmp = new System.Drawing.Bitmap(wallpaper);
         using var ms = new MemoryStream();
         var jpegCodec = ImageCodecInfo.GetImageDecoders()
             .FirstOrDefault(c => c.FormatID == ImageFormat.Jpeg.Guid);
@@ -352,7 +349,10 @@ public partial class MainWindow
         }
         SetWallpaperImage();
     }
-    private void ChangeHighlightColor(object sender, RoutedEventArgs e) { }
+    private void ChangeHighlightColor(object sender, RoutedEventArgs e)
+    {
+        
+    }
     #endregion
     #region activation tweaks
     private void ActivateWindows(object sender, RoutedEventArgs e)
