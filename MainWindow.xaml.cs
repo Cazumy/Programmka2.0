@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -280,10 +281,16 @@ public partial class MainWindow
         if (key == null) return;
 
         string wallpaper = key.GetValue(registryValue)?.ToString();
-        if (string.IsNullOrEmpty(wallpaper) && !File.Exists(wallpaper))
+        if (!File.Exists(wallpaper) || string.IsNullOrEmpty(wallpaper))
         {
-            desktopShowcase.Visibility = Visibility.Collapsed;
-            return;
+            
+            wallpaper = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Microsoft\Windows\Themes\TranscodedWallpaper1");
+            if (!File.Exists(wallpaper))
+            {
+                MessageBox.Show("Аллах акбар");
+                this.Close();
+                return;
+            }
         }
 
         string appFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wallpapers");
@@ -292,15 +299,13 @@ public partial class MainWindow
 
         string compressedWallpaper = Path.Combine(appFolder, "compressed_wallpaper.jpg");
 
-        using (var bmp = new Bitmap(wallpaper))//странно 129038712803710273081273081273
-        using (var ms = new MemoryStream())
-        {
-            var jpegCodec = ImageCodecInfo.GetImageDecoders()
-                .FirstOrDefault(c => c.FormatID == ImageFormat.Jpeg.Guid);
-            var encoderParams = new EncoderParameters(1);
-            encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 35L);
-            bmp.Save(compressedWallpaper, jpegCodec, encoderParams);
-        }
+        using var bmp = new Bitmap(wallpaper);
+        using var ms = new MemoryStream();
+        var jpegCodec = ImageCodecInfo.GetImageDecoders()
+            .FirstOrDefault(c => c.FormatID == ImageFormat.Jpeg.Guid);
+        var encoderParams = new EncoderParameters(1);
+        encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 35L);
+        bmp.Save(compressedWallpaper, jpegCodec, encoderParams);
 
         _wallpaperPath = wallpaper;
         _compressedWallpaperPath = compressedWallpaper;

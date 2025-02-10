@@ -274,6 +274,8 @@
     <Resource Include="Resources\Images\Showcase\msedge.png" />
     <Resource Include="Resources\Images\Showcase\ni.png" />
     <Resource Include="Resources\Images\Showcase\qa.png" />
+    <Resource Include="Resources\Images\exeNotifications.png" />
+    <Resource Include="Resources\Images\fileExtensions.png" />
     <Content Include="Resources\RS1.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
