@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Programmka;
 public partial class MainWindow
@@ -349,9 +350,19 @@ public partial class MainWindow
         }
         SetWallpaperImage();
     }
+    private void ColorPickerPreview(object sender, HandyControl.Data.FunctionEventArgs<Color> e)
+    {
+        var colorBorder = "#" + ColorPicker.SelectedBrush.ToString().Substring(3);
+        HighlightColorImage.BorderBrush = (Brush)new BrushConverter().ConvertFromString(colorBorder);
+        var colorBackground = "#30" + ColorPicker.SelectedBrush.ToString().Substring(3);
+        HighlightColorImage.Background = (Brush)new BrushConverter().ConvertFromString(colorBackground);
+    }
     private void ChangeHighlightColor(object sender, RoutedEventArgs e)
     {
-        
+        var color = ColorPicker.SelectedBrush.Color;
+        var rgbValue = $"{color.R} {color.G} {color.B}";
+        const string subkey = @"Control Panel\Colors";
+        Methods.CreateReg(RegistryHive.CurrentUser, subkey, "Hilight", "", rgbValue);
     }
     #endregion
     #region activation tweaks
@@ -406,11 +417,12 @@ ed467e6e4f126e19cccccf98c3b9f98c4660341d700d11a5c1aa52
 be9caf70ca9cee8199c54758f64acc9c27d3968d5e69ecb901b91d
 538d079f9f1fd1a81d656627d962bf547c38ebbda774df21605c33
 eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
-        System.IO.File.WriteAllText(selectedFolderPath + @"\rarreg.key.txt", key);
+        File.WriteAllText(selectedFolderPath + @"\rarreg.key.txt", key);
     }
     private void BecameAdminWin10(object sender, RoutedEventArgs e)
     {
-        Methods.RunInCMD($"net user {System.Environment.UserName} /active:yes");
+        Methods.RunInCMD($"net user {Environment.UserName} /active:yes");
+        tabItemDescription.Text = "Пользователь стал администратором";
     }
     #endregion
     #region fix tweaks

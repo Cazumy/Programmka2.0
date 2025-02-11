@@ -2,9 +2,8 @@
     x:Class="Programmka.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:Programmka"
-    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
     Title="Programmka"
     Background="#FF290029"
     ResizeMode="NoResize"
@@ -134,9 +133,9 @@
             Source="Resources\Images/win10.png" />
         <TextBlock
             x:Name="tabItemDescription"
-            Width="280"
+            Width="480"
             Height="30"
-            Margin="0,22,50,0"
+            Margin="0,22,70,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             FontFamily="MV Boli"
@@ -252,7 +251,6 @@
                             BorderBrush="#0078d7"
                             BorderThickness="1"
                             Margin="0 0 60 0"/>
-
                         <Image
                             Width="30"
                             Margin="10,10,0,0"
@@ -288,10 +286,14 @@
                                 Checked="WallpaperCompression"
                                 Unchecked="WallpaperCompression" />
                         </Grid>
+                        <Grid Height="232" Margin="0 0 0 10">
+                            <hc:ColorPicker x:Name="ColorPicker" SelectedColorChanged="ColorPickerPreview"/>
+                            <Border Width="148" HorizontalAlignment="Right" Margin="0 0 52 58" Height="21" VerticalAlignment="Bottom" Background="White"/>
+                        </Grid>
                         <Button
                             x:Name="highlightColorChanger"
-                            Width="100"
-                            Height="60"
+                            Width="170"
+                            Height="30"
                             Click="ChangeHighlightColor"
                             Content="Поменять цвет выделения" />
                     </StackPanel>
