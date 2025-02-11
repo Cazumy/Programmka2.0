@@ -123,6 +123,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style BasedOn="{StaticResource ButtonPrimary}" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
     </Window.Resources>
     <Grid Width="1000" Height="600">
         <Image
@@ -132,14 +136,14 @@
             VerticalAlignment="Top"
             Source="Resources\Images/win10.png" />
         <hc:LoadingCircle
-            IsRunning="False"
-            Visibility="Hidden"
             x:Name="LoadingCircleObject"
             Width="24"
             Height="24"
             Margin="0,24,70,0"
             HorizontalAlignment="Right"
-            VerticalAlignment="Top" />
+            VerticalAlignment="Top"
+            IsRunning="False"
+            Visibility="Hidden" />
         <TextBlock
             x:Name="tabItemDescription"
             Width="480"
@@ -147,6 +151,7 @@
             Margin="0,22,100,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
+            TextAlignment="Center"
             FontFamily="MV Boli"
             FontSize="16"
             Foreground="White"
@@ -163,7 +168,10 @@
                         Width="600"
                         Margin="5,-15,0,0"
                         VerticalAlignment="Center">
-                        <Image x:Name="explorerShowcaseImage" Source="Resources\Images\Showcase\explorer_ex.png" />
+                        <Image
+                            x:Name="explorerShowcaseImage"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="Resources\Images\Showcase\explorer_ex.png" />
                         <StackPanel
                             Width="149"
                             Margin="1,69,0,20"
@@ -238,7 +246,10 @@
                                 Unchecked="ExeNotifications" />
                         </Grid>
                         <Grid>
-                            <Button Click="ReloadExplorer" Content="Перезагрузить проводник" />
+                            <Button
+                                hc:IconElement.Geometry="{StaticResource RotateRightGeometry}"
+                                Click="ReloadExplorer"
+                                Content="Перезагрузить проводник"/>
                         </Grid>
                     </StackPanel>
                 </StackPanel>
@@ -250,7 +261,10 @@
                         Width="500"
                         Margin="20,-30,50,0"
                         VerticalAlignment="Center">
-                        <Image x:Name="WallpaperImage" Stretch="Uniform" />
+                        <Image
+                            x:Name="WallpaperImage"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Stretch="Uniform" />
                         <Border
                             x:Name="HighlightColorImage"
                             Width="200"
@@ -307,10 +321,11 @@
                         </Grid>
                         <Button
                             x:Name="highlightColorChanger"
-                            Width="170"
+                            Width="200"
                             Height="30"
+                            hc:IconElement.Geometry="{StaticResource SaveGeometry}"
                             Click="ChangeHighlightColor"
-                            Content="Поменять цвет выделения" />
+                            Content="Поменять цвет выделения"/>
                     </StackPanel>
                 </StackPanel>
             </TabItem>
@@ -319,20 +334,19 @@
                     <Button
                         x:Name="ActivateWindowsButton"
                         Margin="0,0,0,20"
+                        hc:IconElement.Geometry="{StaticResource WindowsGeometry}"
                         Click="ActivateWindows"
-                        Content="Windows\Office"
-                        Cursor="Hand" />
+                        Content="Windows\Office" />
                     <Button
                         x:Name="ActivateWinRarButton"
                         Margin="0,0,0,20"
                         Click="ActivateWinRar"
-                        Content="WinRar"
-                        Cursor="Hand" />
+                        Content="WinRar" />
                     <Button
                         x:Name="BecameAdminWin10Button"
+                        hc:IconElement.Geometry="{StaticResource FatalGeometry}"
                         Click="BecameAdminWin10"
-                        Content="Сделать текущего пользователя администратором"
-                        Cursor="Hand" />
+                        Content="Сделать текущего пользователя администратором" />
                 </StackPanel>
             </TabItem>
             <TabItem x:Name="fixesItem" Tag="pack://application:,,,/Programmka;component/Resources\Images/fix.png">
@@ -347,20 +361,20 @@
                         Text="Внутренние диски SATA отображаются как съемные носители" />
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                         <Button
-                            Width="76"
-                            Height="44"
+                            Width="100"
+                            Height="36"
                             Margin="0,0,30,0"
                             VerticalAlignment="Top"
+                            hc:IconElement.Geometry="{StaticResource SuccessGeometry}"
                             Click="FixHardDisks"
-                            Content="Fix"
-                            Cursor="Hand" />
+                            Content="Fix"/>
                         <Button
-                            Width="76"
-                            Height="44"
+                            Width="100"
+                            Height="36"
                             VerticalAlignment="Top"
+                            hc:IconElement.Geometry="{StaticResource ErrorGeometry}"
                             Click="RemoveFixHardDisks"
-                            Content="Undo fix"
-                            Cursor="Hand" />
+                            Content="Undo fix"/>
                     </StackPanel>
                     <TextBlock
                         Margin="0,20,0,0"
@@ -368,11 +382,11 @@
                         Foreground="White"
                         Text="Пропали иконки, остались только имена ярлыков и папок" />
                     <Button
-                        Width="80"
+                        Width="100"
+                        hc:IconElement.Geometry="{StaticResource SuccessGeometry}"
                         Height="40"
                         Click="ReturnLabelArrows"
-                        Content="Fix"
-                        Cursor="Hand" />
+                        Content="Fix"/>
                 </StackPanel>
             </TabItem>
             <TabItem x:Name="downloads" Tag="pack://application:,,,/Programmka;component/Resources\Images\download.png">
@@ -396,8 +410,9 @@
                         VerticalAlignment="Top"
                         Orientation="Horizontal">
                         <Button
-                            Width="180px"
+                            Width="220"
                             Height="40"
+                            hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"
                             Click="CleanupTemp"
                             Content="Очистка временных файлов" />
                         <TextBlock
@@ -415,11 +430,21 @@
                             Text="0" />
                     </StackPanel>
                     <StackPanel
-                        Width="200"
+                        Width="220"
                         Height="200"
+                        Margin="10,0,0,0"
                         HorizontalAlignment="Left">
-                        <Button Click="CheckWinSxS" Content="Проверка хранилища WinSxS" />
-                        <Button Click="CleanupWinSxS" Content="Очистка хранилища WinSxS" />
+                        <Button
+                            Width="210"
+                            Margin="0,0,0,10"
+                            hc:IconElement.Geometry="{StaticResource Checkmark}"
+                            Click="CheckWinSxS"
+                            Content="Проверка хранилища WinSxS" />
+                        <Button
+                            Width="210"
+                            hc:IconElement.Geometry="{StaticResource DeleteGeometry}"
+                            Click="CleanupWinSxS"
+                            Content="Очистка хранилища WinSxS"/>
                     </StackPanel>
                 </Grid>
             </TabItem>

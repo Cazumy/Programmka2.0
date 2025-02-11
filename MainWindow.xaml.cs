@@ -433,16 +433,19 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     {
         const string command = "reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\storahci\\Parameters\\Device\" /f /v TreatAsInternalPort /t REG_MULTI_SZ /d \"0\\0 1\\0 2\\0 3\\0 4\\0 5\\0 6\\0 7\\0 8\\0 9\\0 10\\0 11\\0 12\\0 13\\0 14\\0 15\\0 16";
         Methods.RunInCMD(command);
+        tabItemDescription.Text = "Готово";
     }
     private void RemoveFixHardDisks(object sender, RoutedEventArgs e)
     {
         const string command = "reg delete \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\storahci\\Parameters\\Device\" /v TreatAsInternalPort /f\r\n";
         Methods.RunInCMD(command);
+        tabItemDescription.Text = "Готово";
     }
     private void ReturnLabelArrows(object sender, RoutedEventArgs e)
     {
         const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\"; const string dir = "Shell Icons";
         Methods.DeleteRegDir(subKey, dir);
+        tabItemDescription.Text = "Готово";
     }
     #endregion
     #region downloads
@@ -460,7 +463,7 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         bool? result = selectionWindow.ShowDialog();
         if (!selectionWindow.IsConfirmed)
         {
-            MessageBox.Show("Установка офиса отменена");
+            tabItemDescription.Text = "Установка офиса отменена";
             LoadingStatus(false);
             return;
         }
