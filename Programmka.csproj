@@ -80,8 +80,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>RS1.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -220,6 +219,7 @@
     <Resource Include="Resources\Images\cleanup.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="RS1.ico" />
     <Resource Include="Resources\Images\Showcase\3d.png" />
     <Resource Include="Resources\Images\Showcase\bot.png" />
     <Resource Include="Resources\Images\Showcase\dd.png" />

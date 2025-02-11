@@ -363,6 +363,7 @@ public partial class MainWindow
         var rgbValue = $"{color.R} {color.G} {color.B}";
         const string subkey = @"Control Panel\Colors";
         Methods.CreateReg(RegistryHive.CurrentUser, subkey, "Hilight", "", rgbValue);
+        tabItemDescription.Text = "Готово";
     }
     #endregion
     #region activation tweaks
