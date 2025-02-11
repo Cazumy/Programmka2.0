@@ -382,6 +382,7 @@ public partial class MainWindow
     }
     private void ActivateWinRar(object sender, RoutedEventArgs e)
     {
+        LoadingStatus();
         var dialog = new TaskDialog
         {
             Caption = "Ответьте на вопрос",
@@ -393,7 +394,7 @@ public partial class MainWindow
         };
         var result = dialog.Show();
         string selectedFolderPath = null;
-        if (result == TaskDialogResult.Cancel) { return; }
+        if (result == TaskDialogResult.Cancel) { LoadingStatus(false); return;  }
         else if (result == TaskDialogResult.No)
         {
             selectedFolderPath = @"C:\Program Files\WinRAR";
@@ -419,6 +420,7 @@ be9caf70ca9cee8199c54758f64acc9c27d3968d5e69ecb901b91d
 538d079f9f1fd1a81d656627d962bf547c38ebbda774df21605c33
 eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         File.WriteAllText(selectedFolderPath + @"\rarreg.key.txt", key);
+        LoadingStatus(false);
     }
     private void BecameAdminWin10(object sender, RoutedEventArgs e)
     {
@@ -446,6 +448,7 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     #region downloads
     private async void DownloadOffice(object sender, RoutedEventArgs e)
     {
+        LoadingStatus();
         const string fileName = "Configuration.xml";
         System.Text.StringBuilder fileContent = new("""
 <Configuration ID="aa6c9195-b180-4d82-b808-48f4d1886c73">
@@ -458,6 +461,7 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         if (!selectionWindow.IsConfirmed)
         {
             MessageBox.Show("Установка офиса отменена");
+            LoadingStatus(false);
             return;
         }
         if (!selectionWindow.officeSelections[0]) { fileContent.Append(@"      <ExcludeApp ID=""Access"" />" + "\n"); }
@@ -481,7 +485,7 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
   <RemoveMSI />
 </Configuration>
 """);
-        System.IO.File.WriteAllText(@"C:\Program Files\Microsoft Office\" + fileName, fileContent.ToString());
+        File.WriteAllText(@"C:\Program Files\Microsoft Office\" + fileName, fileContent.ToString());
         const string urlOffice = "https://officecdn.microsoft.com/pr/wsus/setup.exe";
         using (var webClient = new System.Net.WebClient())
         {
@@ -490,7 +494,7 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         const string reg = @"reg add ""HKCU\Software\Microsoft\Office\16.0\Common\ExperimentConfigs\Ecs"" /v ""CountryCode"" /t REG_SZ /d ""std::wstring|US"" /f";
         Methods.RunInCMD(reg);
         const string command = @"cd /d ""C:\Program Files\Microsoft Office"" && setup.exe /configure Configuration.xml";
-
+        LoadingStatus(false);
         await Methods.RunInCMD(command);
     }
     #endregion
@@ -509,6 +513,7 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     }
     private void CleanupTemp(object sender, RoutedEventArgs e)
     {
+        LoadingStatus();
         long prevSize = Methods.GetFullTempSize();
         foreach (string path in Methods.AllTempPath)
         {
@@ -517,13 +522,19 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         tempSizeText.Text = Methods.NormalizeByteSyze(Methods.GetFullTempSize());
         var byteDiff = prevSize - Methods.GetFullTempSize();
         tabItemDescription.Text = $"Успешно очищено: {Methods.NormalizeByteSyze(byteDiff)}";
+        LoadingStatus(false);
     }
     #endregion
     #endregion
     #region decorations
+    private void LoadingStatus(bool state = true)
+    {
+        LoadingCircleObject.IsRunning = state;
+        LoadingCircleObject.Visibility = state ? Visibility.Visible : Visibility.Hidden;
+    }
     private void TabItem_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
     {
-        if (sender is Border border && System.Windows.Media.VisualTreeHelper.GetParent(border) is TabItem tabItem)
+        if (sender is Border border && VisualTreeHelper.GetParent(border) is TabItem tabItem)
         {
             tabItemDescription.Text = tabItem.Name switch
             {
