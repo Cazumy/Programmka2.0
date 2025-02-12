@@ -28,7 +28,7 @@ namespace Programmka
                 process.WaitForExit();
             }
         }
-        public static async Task RunInCMD(string command)
+        public static async Task RunInCMD(string command, bool visible = false)
         {
             var startInfo = new ProcessStartInfo
             {
@@ -37,7 +37,7 @@ namespace Programmka
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = !visible
             };
 
             using var process = new Process();
@@ -62,16 +62,6 @@ namespace Programmka
                 Verb = "runas"
             });
         }
-        public static string OpenFolderDialog()
-        {
-            var dialog = new Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog
-            {
-                IsFolderPicker = true,
-                Title = "Выберите папку, в которой установлен WinRar"
-            };
-            return dialog.ShowDialog() == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok ? dialog.FileName : null;
-        }
-
         #region cleanup
         public static readonly System.Collections.Generic.List<string> AllTempPath =
     [
@@ -156,7 +146,7 @@ namespace Programmka
         /// <summary>
         /// RegistryHive.CurrentUser or RegistryHive.LocalMachine ||| value = int/DWORD
         /// </summary>
-        public static bool ContainsRegValue(RegistryHive registryHive, string subkey, string key, int value)
+        public static bool ContainsRegValue(RegistryHive registryHive, string subkey, string key, int iValue = 0, string sValue = "")
         {
             RegistryKey baseKey = (object)registryHive switch
             {
@@ -169,9 +159,19 @@ namespace Programmka
             if (target != null)
             {
                 var targetValue = target.GetValue(key);
-                if (targetValue is int intValue)
+                if (string.IsNullOrEmpty(sValue))
                 {
-                    return intValue == value;
+                    if (targetValue is int intValue)
+                    {
+                        return intValue == iValue;
+                    }
+                }
+                else
+                {
+                    if (targetValue is string strValue)
+                    {
+                        return strValue == sValue;
+                    }
                 }
             }
             return false;

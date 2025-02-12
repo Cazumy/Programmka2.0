@@ -125,7 +125,7 @@
         </Style>
 
         <Style BasedOn="{StaticResource ButtonPrimary}" TargetType="Button">
-            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Cursor" Value="Hand" />
         </Style>
     </Window.Resources>
     <Grid Width="1000" Height="600">
@@ -151,16 +151,63 @@
             Margin="0,22,100,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
-            TextAlignment="Center"
             FontFamily="MV Boli"
             FontSize="16"
             Foreground="White"
+            TextAlignment="Center"
             TextWrapping="WrapWithOverflow" />
         <TabControl
             Margin="16,0,16,8"
             Background="Transparent"
             BorderThickness="0"
             TabStripPlacement="Top">
+            <TabItem x:Name="baseTweaksItem" Tag="pack://application:,,,/Programmka;component/Resources\Images\home.png">
+                <StackPanel
+                    Margin="0,0,40,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center">
+                    <Grid>
+                        <ContentControl
+                            Content="Уведомления при запуске .exe"
+                            Style="{StaticResource ToggleButtonBackgroundStyle}"
+                            Tag="pack://application:,,,/Programmka;component/Resources\Images\exeNotifications.png" />
+                        <ToggleButton
+                            x:Name="ExeNotificationsButton"
+                            Checked="ExeNotifications"
+                            Unchecked="ExeNotifications" />
+                    </Grid>
+                    <Grid>
+                        <ContentControl
+                            Content="Гибернация"
+                            Style="{StaticResource ToggleButtonBackgroundStyle}"
+                            Tag="pack://application:,,,/Programmka;component/Resources\Images\hibernation.png" />
+                        <ToggleButton
+                            x:Name="HibernationButton"
+                            Checked="Hibernation"
+                            Unchecked="Hibernation" />
+                    </Grid>
+                    <Grid>
+                        <ContentControl
+                            Content="Акселерация мыши"
+                            Style="{StaticResource ToggleButtonBackgroundStyle}"
+                            Tag="pack://application:,,,/Programmka;component/Resources\Images\mouseAcceleration.png" />
+                        <ToggleButton
+                            x:Name="MouseAccelerationButton"
+                            Checked="MouseAcceleration"
+                            Unchecked="MouseAcceleration" />
+                    </Grid>
+                    <Grid>
+                        <ContentControl
+                            Content="Залипание клавиш"
+                            Style="{StaticResource ToggleButtonBackgroundStyle}"
+                            Tag="pack://application:,,,/Programmka;component/Resources\Images\keySticking.png" />
+                        <ToggleButton
+                            x:Name="KeyStickingButton"
+                            Checked="KeySticking"
+                            Unchecked="KeySticking" />
+                    </Grid>
+                </StackPanel>
+            </TabItem>
             <TabItem x:Name="fileExplorerItem" Tag="pack://application:,,,/Programmka;component/Resources\Images\file_explorer.png">
                 <StackPanel Orientation="Horizontal">
                     <Grid
@@ -235,22 +282,10 @@
                                 Checked="FileExtensions"
                                 Unchecked="FileExtensions" />
                         </Grid>
-                        <Grid>
-                            <ContentControl
-                                Content="Уведомления при запуске .exe"
-                                Style="{StaticResource ToggleButtonBackgroundStyle}"
-                                Tag="pack://application:,,,/Programmka;component/Resources\Images\exeNotifications.png" />
-                            <ToggleButton
-                                x:Name="ExeNotificationsButton"
-                                Checked="ExeNotifications"
-                                Unchecked="ExeNotifications" />
-                        </Grid>
-                        <Grid>
-                            <Button
-                                hc:IconElement.Geometry="{StaticResource RotateRightGeometry}"
-                                Click="ReloadExplorer"
-                                Content="Перезагрузить проводник"/>
-                        </Grid>
+                        <Button
+                            hc:IconElement.Geometry="{StaticResource RotateRightGeometry}"
+                            Click="ReloadExplorer"
+                            Content="Перезагрузить проводник" />
                     </StackPanel>
                 </StackPanel>
             </TabItem>
@@ -323,9 +358,10 @@
                             x:Name="highlightColorChanger"
                             Width="200"
                             Height="30"
+                            Margin="0,0,0,10"
                             hc:IconElement.Geometry="{StaticResource SaveGeometry}"
                             Click="ChangeHighlightColor"
-                            Content="Поменять цвет выделения"/>
+                            Content="Поменять цвет выделения" />
                     </StackPanel>
                 </StackPanel>
             </TabItem>
@@ -351,7 +387,6 @@
             </TabItem>
             <TabItem x:Name="fixesItem" Tag="pack://application:,,,/Programmka;component/Resources\Images/fix.png">
                 <StackPanel
-                    Height="166"
                     Margin="20,20,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top">
@@ -367,14 +402,14 @@
                             VerticalAlignment="Top"
                             hc:IconElement.Geometry="{StaticResource SuccessGeometry}"
                             Click="FixHardDisks"
-                            Content="Fix"/>
+                            Content="Fix" />
                         <Button
                             Width="100"
                             Height="36"
                             VerticalAlignment="Top"
                             hc:IconElement.Geometry="{StaticResource ErrorGeometry}"
                             Click="RemoveFixHardDisks"
-                            Content="Undo fix"/>
+                            Content="Undo fix" />
                     </StackPanel>
                     <TextBlock
                         Margin="0,20,0,0"
@@ -383,10 +418,14 @@
                         Text="Пропали иконки, остались только имена ярлыков и папок" />
                     <Button
                         Width="100"
-                        hc:IconElement.Geometry="{StaticResource SuccessGeometry}"
                         Height="40"
+                        hc:IconElement.Geometry="{StaticResource SuccessGeometry}"
                         Click="ReturnLabelArrows"
-                        Content="Fix"/>
+                        Content="Fix" />
+                    <Button
+                        Margin="0,20,0,0"
+                        Click="RepairSystem"
+                        Content="Восстановить системные файлы" />
                 </StackPanel>
             </TabItem>
             <TabItem x:Name="downloads" Tag="pack://application:,,,/Programmka;component/Resources\Images\download.png">
@@ -444,7 +483,7 @@
                             Width="210"
                             hc:IconElement.Geometry="{StaticResource DeleteGeometry}"
                             Click="CleanupWinSxS"
-                            Content="Очистка хранилища WinSxS"/>
+                            Content="Очистка хранилища WinSxS" />
                     </StackPanel>
                 </Grid>
             </TabItem>

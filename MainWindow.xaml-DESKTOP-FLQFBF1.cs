@@ -7,12 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace Programmka;
 public partial class MainWindow
 {
-    #region init
     private readonly bool _ignoreToggleEvents = true;
     public MainWindow()
     {
@@ -23,19 +21,15 @@ public partial class MainWindow
         tempSizeText.Text = Methods.NormalizeByteSyze(Methods.GetFullTempSize());
         Closing += MainWindow_Closing;
     }
+
     private void InitializeToggleButtons()
     {
-        ExeNotificationsButton.IsChecked = CheckExeNotifications();
-        HibernationButton.IsChecked = CheckHibernation();
-        MouseAccelerationButton.IsChecked = CheckMouseAcceleration();
-        KeyStickingButton.IsChecked = CheckKeySticking();
-
         DiskDuplicateButton.IsChecked = CheckDuplicate();
         QuickAccessButton.IsChecked = CheckQuickAccess();
         Objects3DButton.IsChecked = Check3DObjects();
         NetworkIconButton.IsChecked = CheckNetworkIcon();
         FileExtensionsButton.IsChecked = CheckFileExtensions();
-        
+        ExeNotificationsButton.IsChecked = CheckExeNotifications();
         LabelArrowsButton.IsChecked = CheckLabels();
         WallpaperCompressionButton.IsChecked = CheckWallpaperCompression();
     }
@@ -43,10 +37,10 @@ public partial class MainWindow
     {
         #region explorer
         SetExplorerImage();
-        qaImage.Visibility = CheckQuickAccess() ? Visibility.Collapsed : Visibility.Visible;
-        tdoImage.Visibility = Check3DObjects() ? Visibility.Collapsed : Visibility.Visible;
-        ddImage.Visibility = CheckDuplicate() ? Visibility.Collapsed : Visibility.Visible;
-        niImage.Visibility = CheckNetworkIcon() ? Visibility.Collapsed : Visibility.Visible;
+        qaImage.Width = CheckQuickAccess() ? 0 : 149;
+        tdoImage.Width = Check3DObjects() ? 0 : 149;
+        ddImage.Width = CheckDuplicate() ? 0 : 149;
+        niImage.Width = CheckNetworkIcon() ? 0 : 149;
         #endregion
         #region desktop
         LoadWallpaperImage();
@@ -55,34 +49,18 @@ public partial class MainWindow
         LabelarrowShowcase.Visibility = CheckLabels() ? Visibility.Collapsed : Visibility.Visible;
         #endregion
     }
+    private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+        if (Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wallpapers")))
+        {
+            try
+            {
+                Directory.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wallpapers"), true);
+            }
+            catch (Exception) { }
+        }
+    }
     #region checks for ToggleButtons
-    private static bool CheckExeNotifications()
-    {
-        const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System";
-        const string key1 = "ConsentPromptBehaviorAdmin";
-        const string key2 = "EnableLUA";
-        const string key3 = "PromptOnSecureDesktop";
-        return Methods.ContainsRegValue(RegistryHive.LocalMachine, subkey, key1, 0) && Methods.ContainsRegValue(RegistryHive.LocalMachine, subkey, key2, 0) && Methods.ContainsRegValue(RegistryHive.LocalMachine, subkey, key3, 0);
-    }
-    private static bool CheckHibernation()
-    {
-        const string subkey = @"SYSTEM\CurrentControlSet\Control\Power";
-        const string key = "HibernateEnabled";
-        return Methods.ContainsRegValue(RegistryHive.LocalMachine, subkey, key, 0);
-    }
-    private static bool CheckMouseAcceleration()
-    {
-        const string subkey = @"Control Panel\Mouse";
-        const string key1 = "MouseSpeed", key2 = "MouseThreshold1", key3 = "MouseThreshold2";
-        return Methods.ContainsRegValue(RegistryHive.CurrentUser, subkey, key1, 0, "0") && Methods.ContainsRegValue(RegistryHive.CurrentUser, subkey, key2, 0, "0") && Methods.ContainsRegValue(RegistryHive.CurrentUser, subkey, key3, 0, "0");
-    }
-    private static bool CheckKeySticking()
-    {
-        const string subkey = @"Control Panel\Accessibility\StickyKeys";
-        const string key = "Flags";
-        return Methods.ContainsRegValue(RegistryHive.CurrentUser, subkey, key, 0, "506");
-    }
-
     private static bool CheckDuplicate()
     {
         const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders\{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
@@ -121,7 +99,6 @@ public partial class MainWindow
         const string key = "HideFileExt";
         return Methods.ContainsRegValue(RegistryHive.CurrentUser, subkey, key, 0);
     }
-
     private static bool CheckLabels()
     {
         const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons", key = "29";
@@ -131,131 +108,89 @@ public partial class MainWindow
     {
         const string subKey = @"Control Panel\Desktop"; const string key = "JPEGImportQuality"; const int value = 256;
         return Methods.ContainsRegValue(RegistryHive.CurrentUser, subKey, key, value);
-    }    
-    #endregion
-    #endregion
-    private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-    {
-        if (Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wallpapers")))
-        {
-            try
-            {
-                Directory.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wallpapers"), true);
-            }
-            catch (Exception) { }
-        }
     }
-    #region tweaks
-    #region base
-    private void ExeNotifications(object sender, RoutedEventArgs e)
+    private static bool CheckExeNotifications()
     {
-        if (_ignoreToggleEvents) { return; }
         const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System";
         const string key1 = "ConsentPromptBehaviorAdmin";
         const string key2 = "EnableLUA";
         const string key3 = "PromptOnSecureDesktop";
-        int value1, value2, value3;
-        if (ExeNotificationsButton.IsChecked == true)
-        {
-            value1 = value2 = value3 = 0;
-        }
-        else
-        {
-            value1 = 2;
-            value2 = value3 = 1;
-        }
-        Methods.CreateReg(RegistryHive.LocalMachine, subkey, key1, "", "", value1);
-        Methods.CreateReg(RegistryHive.LocalMachine, subkey, key2, "", "", value2);
-        Methods.CreateReg(RegistryHive.LocalMachine, subkey, key3, "", "", value3);
-    }
-    private void Hibernation(object sender, RoutedEventArgs e)
-    {
-        if (_ignoreToggleEvents) return;
-        const string subkey = @"SYSTEM\CurrentControlSet\Control\Power";
-        const string key = "HibernateEnabled";
-        int value = (bool)HibernationButton.IsChecked ? 0 : 1;
-        Methods.CreateReg(RegistryHive.LocalMachine, subkey, key, "", "", value);
-    }
-    private void MouseAcceleration(object sender, RoutedEventArgs e)
-    {
-        if (_ignoreToggleEvents) return;
-        const string subkey = @"Control Panel\Mouse";
-        const string key1 = "MouseSpeed", key2 = "MouseThreshold1", key3 = "MouseThreshold2";
-        string value1, value2, value3;
-        if (MouseAccelerationButton.IsChecked == true)
-        {
-            value1 = value2 = value3 = "0";
-        }
-        else
-        {
-            value1 = "1"; value2 = "6"; value3 = "10";
-        }
-        Methods.CreateReg(RegistryHive.CurrentUser, subkey, key1, "", value1);
-        Methods.CreateReg(RegistryHive.CurrentUser, subkey, key2, "", value2);
-        Methods.CreateReg(RegistryHive.CurrentUser, subkey, key3, "", value3);
-    }
-    private void KeySticking(object sender, RoutedEventArgs e)
-    {
-        if (_ignoreToggleEvents) return;
-        const string subkey = @"Control Panel\Accessibility\StickyKeys";
-        const string key = "Flags";
-        string keyValue = (bool)KeyStickingButton.IsChecked ? "506" : "511";
-        Methods.CreateReg(RegistryHive.CurrentUser, subkey, key, "", keyValue);
+        return Methods.ContainsRegValue(RegistryHive.LocalMachine, subkey, key1, 0) && Methods.ContainsRegValue(RegistryHive.LocalMachine, subkey, key2, 0) && Methods.ContainsRegValue(RegistryHive.LocalMachine, subkey, key3, 0);
     }
     #endregion
+    #region tweaks
     #region explorer tweaks
+    private void SetExplorerImage()
+    {
+        var bitmap = new System.Windows.Media.Imaging.BitmapImage();
+        bitmap.BeginInit();
+        bitmap.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+        bitmap.UriSource = new Uri(CheckFileExtensions() ?
+            "pack://application:,,,/Resources/Images/Showcase/explorer_ex.png" :
+            "pack://application:,,,/Resources/Images/Showcase/explorer_noex.png", UriKind.Absolute);
+        bitmap.EndInit();
+        explorerShowcaseImage.Source = bitmap;
+    }
     private void DiskDuplicate(object sender, RoutedEventArgs e)
     {
         if (_ignoreToggleEvents) return;
-        const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
-        const string dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
         if (DiskDuplicateButton.IsChecked == true)
         {
+            ddImage.Width = 0;
+            const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
+            const string dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
             Methods.DeleteRegDir(subkey, dir);
         }
         else
         {
+            ddImage.Width = 151;
+            const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders";
+            const string dir = "{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}";
             const string key = "Removable Drives";
             Methods.CreateReg(RegistryHive.LocalMachine, subkey, key, dir);
         }
-        ddImage.Visibility = (bool)DiskDuplicateButton.IsChecked ? Visibility.Collapsed : Visibility.Visible;
     }
     private void QuickAccess(object sender, RoutedEventArgs e)
     {
         if (_ignoreToggleEvents) return;
-        const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
-        const string key = "HubMode";
         if (QuickAccessButton.IsChecked == true)
         {
+            qaImage.Width = 0;
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
+            const string key = "HubMode";
             const string value = "1";
             Methods.CreateReg(RegistryHive.LocalMachine, subKey, key, "", value);
         }
         else
         {
+            qaImage.Width = 151;
+            const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer";
+            const string key = "HubMode";
             Methods.DeleteReg(subKey, key);
         }
-        qaImage.Visibility = (bool)QuickAccessButton.IsChecked ? Visibility.Collapsed : Visibility.Visible;
     }
     private void Objects3D(object sender, RoutedEventArgs e)
     {
         if (_ignoreToggleEvents) return;
         if (Objects3DButton.IsChecked == true)
         {
+            tdoImage.Width = 0;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\"; const string dir = "{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
             Methods.DeleteRegDir(subKey, dir);
         }
         else
         {
+            tdoImage.Width = 151;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}";
             Methods.CreateRegDir(subKey);
         }
-        tdoImage.Visibility = (bool)Objects3DButton.IsChecked ? Visibility.Collapsed : Visibility.Visible;
     }
     private void NetworkIcon(object sender, RoutedEventArgs e)
     {
         if (_ignoreToggleEvents) return;
         if (NetworkIconButton.IsChecked == true)
         {
+            niImage.Width = 0;
             var commands = new[]
             {
             "reg add \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0940064\" /f >nul 2>&1",
@@ -271,6 +206,7 @@ public partial class MainWindow
         }
         else
         {
+            niImage.Width = 151;
             var commands = new[]
             {
             "reg add \"HKCU\\Software\\Classes\\CLSID\\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\\ShellFolder\" /v \"Attributes\" /t REG_DWORD /d \"0xb0040064\" /f >nul 2>&1",
@@ -284,7 +220,6 @@ public partial class MainWindow
             };
             Methods.RunInCMD(commands);
         }
-        niImage.Visibility = (bool)NetworkIconButton.IsChecked ? Visibility.Collapsed : Visibility.Visible;
     }
     private void FileExtensions(object sender, RoutedEventArgs e)
     {
@@ -302,6 +237,26 @@ public partial class MainWindow
             Methods.CreateReg(RegistryHive.CurrentUser, subkey, key, "", "", value);
         }
         SetExplorerImage();
+    }
+    private void ExeNotifications(object sender, RoutedEventArgs e)
+    {
+        if (_ignoreToggleEvents) { return; }
+        const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System";
+        const string key1 = "ConsentPromptBehaviorAdmin";
+        const string key2 = "EnableLUA";
+        const string key3 = "PromptOnSecureDesktop";
+        if (ExeNotificationsButton.IsChecked == true)
+        {
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key1, "", "", 0);
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key2, "", "", 0);
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key3, "", "", 0);
+        }
+        else
+        {
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key1, "", "", 2);
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key2, "", "", 1);
+            Methods.CreateReg(RegistryHive.LocalMachine, subkey, key3, "", "", 1);
+        }
     }
     private void ReloadExplorer(object sender, RoutedEventArgs e)
     {
@@ -368,6 +323,7 @@ public partial class MainWindow
         if (_ignoreToggleEvents) return;
         if (LabelArrowsButton.IsChecked == true)
         {
+            LabelarrowShowcase.Visibility = Visibility.Collapsed;
             const string subkey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons";
             const string key = "29";
             using var target = Registry.LocalMachine.CreateSubKey(subkey);
@@ -375,25 +331,26 @@ public partial class MainWindow
         }
         else
         {
+            LabelarrowShowcase.Visibility = Visibility.Visible;
             const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\"; const string dir = "Shell Icons";
             Methods.DeleteRegDir(subKey, dir);
         }
-        LabelarrowShowcase.Visibility = (bool)LabelArrowsButton.IsChecked ? Visibility.Collapsed : Visibility.Visible;
     }
     private void WallpaperCompression(object sender, RoutedEventArgs e)
     {
         if (_ignoreToggleEvents) return;
-        int keyValue = (bool)WallpaperCompressionButton.IsChecked ? 256 : 128;
-        Methods.SetWallpaperCompressionQuality(keyValue);
+        if (WallpaperCompressionButton.IsChecked == true)
+        {
+            Methods.SetWallpaperCompressionQuality(256);
+        }
+        else
+        {
+            Methods.SetWallpaperCompressionQuality(128);
+        }
         SetWallpaperImage();
     }
     private void ChangeHighlightColor(object sender, RoutedEventArgs e)
     {
-        var color = ColorPicker.SelectedBrush.Color;
-        var rgbValue = $"{color.R} {color.G} {color.B}";
-        const string subkey = @"Control Panel\Colors";
-        Methods.CreateReg(RegistryHive.CurrentUser, subkey, "Hilight", "", rgbValue);
-        tabItemDescription.Text = "Готово";
     }
     #endregion
     #region activation tweaks
@@ -412,8 +369,7 @@ public partial class MainWindow
     }
     private void ActivateWinRar(object sender, RoutedEventArgs e)
     {
-        LoadingStatus();
-        using var dialog = new TaskDialog
+        var dialog = new TaskDialog
         {
             Caption = "Ответьте на вопрос",
             InstructionText = "Вы меняли директорию по умолчанию для установки WINRAR?",
@@ -424,14 +380,14 @@ public partial class MainWindow
         };
         var result = dialog.Show();
         string selectedFolderPath = null;
-        if (result == TaskDialogResult.Cancel) { LoadingStatus(false); return;  }
+        if (result == TaskDialogResult.Cancel) { return; }
         else if (result == TaskDialogResult.No)
         {
             selectedFolderPath = @"C:\Program Files\WinRAR";
         }
         else
         {
-            using var folderDialog = new CommonOpenFileDialog { IsFolderPicker = true, Title = "Выберите папку, в которой установлен WinRar" };
+            var folderDialog = new CommonOpenFileDialog { IsFolderPicker = true };
             if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 selectedFolderPath = folderDialog.FileName;
@@ -449,13 +405,11 @@ ed467e6e4f126e19cccccf98c3b9f98c4660341d700d11a5c1aa52
 be9caf70ca9cee8199c54758f64acc9c27d3968d5e69ecb901b91d
 538d079f9f1fd1a81d656627d962bf547c38ebbda774df21605c33
 eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
-        File.WriteAllText(selectedFolderPath + @"\rarreg.key.txt", key);
-        LoadingStatus(false);
+        System.IO.File.WriteAllText(selectedFolderPath + @"\rarreg.key.txt", key);
     }
     private void BecameAdminWin10(object sender, RoutedEventArgs e)
     {
-        Methods.RunInCMD($"net user {Environment.UserName} /active:yes");
-        tabItemDescription.Text = "Пользователь стал администратором";
+        Methods.RunInCMD($"net user {System.Environment.UserName} /active:yes");
     }
     #endregion
     #region fix tweaks
@@ -463,32 +417,21 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     {
         const string command = "reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\storahci\\Parameters\\Device\" /f /v TreatAsInternalPort /t REG_MULTI_SZ /d \"0\\0 1\\0 2\\0 3\\0 4\\0 5\\0 6\\0 7\\0 8\\0 9\\0 10\\0 11\\0 12\\0 13\\0 14\\0 15\\0 16";
         Methods.RunInCMD(command);
-        tabItemDescription.Text = "Готово";
     }
     private void RemoveFixHardDisks(object sender, RoutedEventArgs e)
     {
         const string command = "reg delete \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\storahci\\Parameters\\Device\" /v TreatAsInternalPort /f\r\n";
         Methods.RunInCMD(command);
-        tabItemDescription.Text = "Готово";
     }
     private void ReturnLabelArrows(object sender, RoutedEventArgs e)
     {
         const string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\"; const string dir = "Shell Icons";
         Methods.DeleteRegDir(subKey, dir);
-        tabItemDescription.Text = "Готово";
-    }
-    private void RepairSystem(object sender, RoutedEventArgs e)
-    {
-        const string commandCmd = "sfc /scannow";
-        const string commandPowerShell = "dism /Online /Cleanup-Image /RestoreHealth";
-        _ = Methods.RunInCMD(commandCmd, true);
-        Methods.RunInPowerShell(commandPowerShell);
     }
     #endregion
     #region downloads
     private async void DownloadOffice(object sender, RoutedEventArgs e)
     {
-        LoadingStatus();
         const string fileName = "Configuration.xml";
         System.Text.StringBuilder fileContent = new("""
 <Configuration ID="aa6c9195-b180-4d82-b808-48f4d1886c73">
@@ -500,8 +443,7 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         bool? result = selectionWindow.ShowDialog();
         if (!selectionWindow.IsConfirmed)
         {
-            tabItemDescription.Text = "Установка офиса отменена";
-            LoadingStatus(false);
+            MessageBox.Show("Установка офиса отменена");
             return;
         }
         if (!selectionWindow.officeSelections[0]) { fileContent.Append(@"      <ExcludeApp ID=""Access"" />" + "\n"); }
@@ -525,7 +467,7 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
   <RemoveMSI />
 </Configuration>
 """);
-        File.WriteAllText(@"C:\Program Files\Microsoft Office\" + fileName, fileContent.ToString());
+        System.IO.File.WriteAllText(@"C:\Program Files\Microsoft Office\" + fileName, fileContent.ToString());
         const string urlOffice = "https://officecdn.microsoft.com/pr/wsus/setup.exe";
         using (var webClient = new System.Net.WebClient())
         {
@@ -534,7 +476,7 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         const string reg = @"reg add ""HKCU\Software\Microsoft\Office\16.0\Common\ExperimentConfigs\Ecs"" /v ""CountryCode"" /t REG_SZ /d ""std::wstring|US"" /f";
         Methods.RunInCMD(reg);
         const string command = @"cd /d ""C:\Program Files\Microsoft Office"" && setup.exe /configure Configuration.xml";
-        LoadingStatus(false);
+
         await Methods.RunInCMD(command);
     }
     #endregion
@@ -553,7 +495,6 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     }
     private void CleanupTemp(object sender, RoutedEventArgs e)
     {
-        LoadingStatus();
         long prevSize = Methods.GetFullTempSize();
         foreach (string path in Methods.AllTempPath)
         {
@@ -562,23 +503,16 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
         tempSizeText.Text = Methods.NormalizeByteSyze(Methods.GetFullTempSize());
         var byteDiff = prevSize - Methods.GetFullTempSize();
         tabItemDescription.Text = $"Успешно очищено: {Methods.NormalizeByteSyze(byteDiff)}";
-        LoadingStatus(false);
     }
     #endregion
     #endregion
     #region decorations
-    private void LoadingStatus(bool state = true)
-    {
-        LoadingCircleObject.IsRunning = state;
-        LoadingCircleObject.Visibility = state ? Visibility.Visible : Visibility.Hidden;
-    }
     private void TabItem_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
     {
-        if (sender is Border border && VisualTreeHelper.GetParent(border) is TabItem tabItem)
+        if (sender is Border border && System.Windows.Media.VisualTreeHelper.GetParent(border) is TabItem tabItem)
         {
             tabItemDescription.Text = tabItem.Name switch
             {
-                "baseTweaksItem" => "Базовые твики",
                 "fileExplorerItem" => "Кастомизация проводника",
                 "desktopItem" => "Кастомизация рабочего стола",
                 "activationItem" => "Активация",
@@ -592,24 +526,6 @@ eccb9c18530ee0d147058f8b282a9ccfc31322fafcbb4251940582";
     private void TabItem_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
     {
         tabItemDescription.Text = string.Empty;
-    }
-    private void SetExplorerImage()
-    {
-        var bitmap = new System.Windows.Media.Imaging.BitmapImage();
-        bitmap.BeginInit();
-        bitmap.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
-        bitmap.UriSource = new Uri(CheckFileExtensions() ?
-            "pack://application:,,,/Resources/Images/Showcase/explorer_ex.png" :
-            "pack://application:,,,/Resources/Images/Showcase/explorer_noex.png", UriKind.Absolute);
-        bitmap.EndInit();
-        explorerShowcaseImage.Source = bitmap;
-    }
-    private void ColorPickerPreview(object sender, HandyControl.Data.FunctionEventArgs<Color> e)
-    {
-        var colorBorder = "#" + ColorPicker.SelectedBrush.ToString().Substring(3);
-        HighlightColorImage.BorderBrush = (Brush)new BrushConverter().ConvertFromString(colorBorder);
-        var colorBackground = "#30" + ColorPicker.SelectedBrush.ToString().Substring(3);
-        HighlightColorImage.Background = (Brush)new BrushConverter().ConvertFromString(colorBackground);
     }
     #endregion
 }
